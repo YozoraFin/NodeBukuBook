@@ -24,7 +24,7 @@ export default function SideBar() {
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <li class="nav-item">
-                            <Link to={'/admin'} class={location.pathname === '/admin' ? 'nav-link active' : 'nav-link'}>
+                            <Link to={'/admin'} class={location.pathname === '/admin' || location.pathname.indexOf('social') > -1 ? 'nav-link active' : 'nav-link'}>
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>Siteconfig</p>
                             </Link>

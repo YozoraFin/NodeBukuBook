@@ -8,7 +8,7 @@ export default function Portal() {
         if(d.getTime() < localStorage.getItem('expired')) {
             navigate('/admin')
         } else {
-            navigate('/password')
+            navigate('/login')
         }
     }, [])
 }
