@@ -170,7 +170,7 @@ export default function SiteConfig() {
                         </div>
                     </div>
                     <div className="col-12">
-                        <div className="card">
+                        <div className="card card-primary">
                             <div className="card-header">
                                 <h3 className="card-title">Media Social</h3>
                             </div>
@@ -188,15 +188,6 @@ export default function SiteConfig() {
                                     <tbody>
                                         {socialtable}
                                     </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Icon</th>
-                                            <th>Nama</th>
-                                            <th>Link</th>
-                                            <th>Opsi</th>
-                                        </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                         </div>

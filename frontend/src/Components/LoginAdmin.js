@@ -51,7 +51,7 @@ export default function LoginAdmin() {
                             <p className='text-danger'>{errorPass}</p>
                             <div className="row">
                                 <div className="col-8">
-                                    <div class="icheck-primary">
+                                    <div className="icheck-primary">
                                         <input type="checkbox" id="remember"/>
                                         <label for="remember">
                                             Remember Me

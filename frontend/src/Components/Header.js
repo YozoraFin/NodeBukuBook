@@ -22,7 +22,7 @@ export default function Header() {
 
             <ul className="navbar-nav ml-auto">
                 <li className="nav-item d-none d-sm-inline-block">
-                    <Link onClick={handleLogout} href="?" className="nav-link"><i class="fa-solid fa-power-off"></i></Link>
+                    <Link onClick={handleLogout} href="?" className="nav-link"><i className="fa-solid fa-power-off"></i></Link>
                 </li>
             </ul>
         </nav>

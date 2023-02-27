@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const password = process.env.DB_PASSWORD
-const db = new Sequelize('bukubook', 'usersiswa', password, {
+const db = new Sequelize('bukubook2', 'usersiswa', password, {
     host: 'localhost',
     dialect: 'mysql'
 });
