@@ -7,6 +7,7 @@ import SocialRouter from './router/SocialRouter.js';
 import BannerRouter from './router/BannerRouter.js';
 import ArticleRouter from './router/ArticleRouter.js';
 import KategoriRouter from './router/KategoriRouter.js';
+import BukuRouter from './router/BukuRouter.js';
 
 const app = express()
 
@@ -28,7 +29,8 @@ app.use(bodyParser.urlencoded({
 app.use('/siteconfig', SiteConfigRouter)
 app.use('/social', SocialRouter)
 app.use('/banner', BannerRouter)
-app.use('/article', ArticleRouter)
+app.use('/artikel', ArticleRouter)
 app.use('/kategori', KategoriRouter)
+app.use('/buku', BukuRouter)
 
 app.listen(5000, () => {console.log('lesgo')})

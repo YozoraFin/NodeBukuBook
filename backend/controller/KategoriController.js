@@ -1,4 +1,5 @@
 import Kategori from "../model/KategoriModel.js"
+import Article from "../model/ArticleModel.js"
 
 export const getKategori = async(req, res) => {
     try {
@@ -66,6 +67,14 @@ export const deleteKategori = async(req, res) => {
         await Kategori.destroy({
             where: {
                 id: req.params.id
+            }
+        })
+        var newVal = {
+            KategoriID: 0
+        }
+        await Article.update(newVal, {
+            where: {
+                KategoriID: req.params.id
             }
         })
         res.json({

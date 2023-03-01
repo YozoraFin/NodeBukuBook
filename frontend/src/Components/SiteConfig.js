@@ -9,19 +9,28 @@ import { convertToHTML } from 'draft-convert';
 import Skeleton from 'react-loading-skeleton'
 import { Link } from 'react-router-dom';
 import 'react-loading-skeleton/dist/skeleton.css'
+import ReactPaginate from 'react-paginate';
 
 export default function SiteConfig() {
     const [tentang, setTentang] = useState(EditorState.createWithContent(
         ContentState.createFromBlockArray(
           convertFromHTML('<p></p>')
         )
-      ))
+    ))
     const [email, setEmail] = useState('')
     const [map, setMap] = useState('')
     const [notelp, setNotelp] = useState('')
     const [alamat, setAlamat] = useState('')
     const [socialData, setSocialData] = useState([])
     const [loadingSocial, setLoadingSocial] = useState(true)
+    const [offsetSocial, setOffsetSocial] = useState(0)
+    const [totalSocial, setTotalSocial] = useState(0)
+    const [socialCount, setSocialCount] = useState(0)
+    const perPage = 10
+
+    const handlePageSocial = (e) => {
+        setOffsetSocial(e.selected*perPage)
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -79,15 +88,24 @@ export default function SiteConfig() {
                 )
               ))
         })
+    }
 
+    const getSocial = () => {
         axios.get('http://localhost:5000/social').then((res) => {
-            setSocialData(res?.data?.data)
+            const slice = res.data.data?.slice(offsetSocial, offsetSocial+perPage)
+            setSocialData(slice)
+            setSocialCount(Math.ceil(res.data.data?.length / perPage))
+            setTotalSocial(res.data.data?.length)
         }).catch((err) => {
             console.log(err)
         }).finally(() => {
             setLoadingSocial(false)
         })
     }
+
+    useEffect(() => {
+        getSocial()
+    }, [offsetSocial])
 
     useEffect(() => {
         getData()
@@ -157,7 +175,7 @@ export default function SiteConfig() {
                                                     editorClassName='form-control'
                                                     editorState={tentang}
                                                     onEditorStateChange={setTentang}
-                                                    editorStyle={{ height: '200px' }}
+                                                    editorStyle={{ height: '280px' }}
                                                 />
                                             </div>
                                         </div>
@@ -175,20 +193,51 @@ export default function SiteConfig() {
                                 <h3 className="card-title">Media Social</h3>
                             </div>
                             <div className="card-body">
-                                <table className="table table-bordered table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Icon</th>
-                                            <th>Nama</th>
-                                            <th>Link</th>
-                                            <th className='d-flex align-items-end'><span>Opsi</span> <Link className='ml-auto' to={'/admin/social/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link> </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {socialtable}
-                                    </tbody>
-                                </table>
+                                <div className="row">
+                                    <div className="col-12">
+                                        <table className="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Icon</th>
+                                                    <th>Nama</th>
+                                                    <th>Link</th>
+                                                    <th className='d-flex align-items-end'><span>Opsi</span> <Link className='ml-auto' to={'/admin/social/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link> </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {socialtable}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-5">
+                                        <div class="dataTables_info" id="example2_info" role="status" aria-live="polite">
+                                            {totalSocial > 10 ? `Menampilkan 1 hingga 10 dari ${totalSocial} hasil` : `Menampilkan ${totalSocial} hasil`}
+                                        </div>
+                                    </div>
+                                    <div className="col-7">
+                                        <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+                                            {totalSocial > 10 ?
+                                                <ReactPaginate
+                                                    containerClassName={"pagination float-right"}
+                                                    pageClassName={"page-item user-select-none"}
+                                                    pageLinkClassName={"page-link"}
+                                                    nextClassName={'page-item user-select-none'}
+                                                    pageCount={socialCount}
+                                                    activeClassName={"active"}
+                                                    nextLinkClassName={'page-link'}
+                                                    previousClassName={'page-item user-select-none'}
+                                                    previousLinkClassName={'page-link'}
+                                                    onPageChange={handlePageSocial}
+                                                />
+                                                :
+                                                ''
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
