@@ -62,7 +62,7 @@ export default function CreateBanner() {
                                         <label htmlFor="Banner">Banner</label>
                                         <div className="input-group">
                                             <div className="custom-file">
-                                                <input name='banner' required onChange={handleFileChange} type="file" className="custom-file-input" id="Banner" />
+                                                <input name='banner' required onChange={handleFileChange} type="file" className="custom-file-input" id="Banner" multiple />
                                                 <label htmlFor="Banner" className="custom-file-label">{fileName === '' ? 'Pilih file' : fileName}</label>
                                             </div>
                                         </div>

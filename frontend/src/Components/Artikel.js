@@ -131,7 +131,12 @@ export default function Artikel() {
                                 <td><Skeleton width={20}/></td>
                                 <td><Skeleton width={200}/></td>
                                 <td><Skeleton width={200}/></td>
-                                <td><Skeleton width={100}/></td>
+                                <td>
+                                    <div className="row">
+                                        <div className="col-6 text-right"><Skeleton width={40} height={40}/></div>
+                                        <div className="col-6"><Skeleton width={40} height={40}/></div>
+                                    </div>
+                                </td>
                             </tr>
                         )
                         :
@@ -151,14 +156,19 @@ export default function Artikel() {
                                 <tr>
                                     <td><Skeleton width={20} /></td>
                                     <td><Skeleton width={100} /></td>
-                                    <td><Skeleton width={100} /></td>
+                                    <td>
+                                        <div className="row">
+                                            <div className="col-6 text-right"><Skeleton width={40} height={40}/></div>
+                                            <div className="col-6"><Skeleton width={40} height={40}/></div>
+                                        </div>
+                                    </td>
                                 </tr>
                             )
                             :
                             kategori?.map((kat, index) => {
                                 return(
                                     <tr key={`tabelkategori${index}`}>
-                                        <td>{index+1}</td>
+                                        <td>{index+1+offsetKategori}</td>
                                         <td>{kat?.Kategori}</td>
                                         <td className='text-center'><Link className='mr-2' to={'/admin/kategori/'+kat?.id}><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeleteKategori(kat?.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></td>
                                     </tr>
@@ -185,7 +195,7 @@ export default function Artikel() {
                                                     <th>#</th>
                                                     <th>Judul</th>
                                                     <th>Penulis</th>
-                                                    <th className='d-flex align-items-end'><span>Opsi</span> <Link className='ml-auto' to={'/admin/artikel/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link> </th>
+                                                    <th><div className='d-flex align-items-end'><span>Opsi</span> <Link className='ml-auto' to={'/admin/artikel/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link></div></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -196,7 +206,7 @@ export default function Artikel() {
                                 </div>
                                 <div className="row">
                                     <div className="col-5">
-                                        <div class="dataTables_info" id="example2_info" role="status" aria-live="polite">{totalArtikel > 10 ? `Menampilkan 1 hingga 10 dari ${totalArtikel} Data` : `Menampilkan ${totalArtikel} hasil`}</div>
+                                        <div class="dataTables_info" id="example2_info" role="status" aria-live="polite">{totalArtikel > perPage ? `Menampilkan 1 hingga ${perPage} dari ${totalArtikel} Data` : `Menampilkan ${totalArtikel} hasil`}</div>
                                     </div>
                                     <div className="col-7">
                                         <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
@@ -237,7 +247,7 @@ export default function Artikel() {
                                                 <tr>
                                                     <th>#</th>
                                                     <th>Kategori</th>
-                                                    <th className='d-flex align-items-end'><span>Opsi</span> <Link className='ml-auto' to={'/admin/kategori/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link> </th>
+                                                    <th><div className='d-flex align-items-end'><span>Opsi</span> <Link className='ml-auto' to={'/admin/kategori/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link></div></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -248,11 +258,11 @@ export default function Artikel() {
                                 </div>
                                 <div className="row">
                                     <div className="col-5">
-                                        <div class="dataTables_info" id="example2_info" role="status" aria-live="polite">{totalKategori > 10 ? `Menampilkan 1 hingga 10 dari ${totalKategori} Data` : `Menampilkan ${totalKategori} hasil`}</div>
+                                        <div class="dataTables_info" id="example2_info" role="status" aria-live="polite">{totalKategori > perPage ? `Menampilkan 1 hingga ${perPage} dari ${totalKategori} Data` : `Menampilkan ${totalKategori} hasil`}</div>
                                     </div>
                                     <div className="col-7">
                                         <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
-                                            {totalKategori > 10 ?
+                                            {totalKategori > perPage ?
                                                 <ReactPaginate
                                                     containerClassName={"pagination float-right"}
                                                     pageClassName={"page-item user-select-none"}

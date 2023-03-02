@@ -1,9 +1,27 @@
 import express from 'express'
-import { getBuku, getDetailBuku } from '../controller/BukuController.js'
+import multer from 'multer'
+import { createBuku, deleteBuku, getBuku, getDetailBuku, updateBuku } from '../controller/BukuController.js'
+import path from 'path'
 
 const BukuRouter = express.Router()
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './foto/buku')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname+'-'+Date.now()+path.extname(file.originalname))
+    }
+})
+
+var upload = multer({
+    storage: storage
+})
 
 BukuRouter.get('/', getBuku)
 BukuRouter.get('/:id', getDetailBuku)
+BukuRouter.post('/', upload.array('sampul'), createBuku)
+BukuRouter.patch('/:id', upload.array('sampul'), updateBuku)
+BukuRouter.delete('/:id', deleteBuku)
+
 
 export default BukuRouter

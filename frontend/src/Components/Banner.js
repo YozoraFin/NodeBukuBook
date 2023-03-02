@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import ReactPaginate from 'react-paginate'
 import { Link } from 'react-router-dom'
 import Swal from 'sweetalert2'
@@ -61,13 +62,24 @@ export default function Banner() {
 
     const dataBanner = loadingBanner ?
                         (
-                            ''
+                            <tr>
+                                <td><Skeleton width={20}/></td>
+                                <td className='text-center'><Skeleton className='bannertable'/><br /><Skeleton width={200} /></td>
+                                <td><Skeleton width={175} /></td>
+                                <td><Skeleton width={300} count={2} /><Skeleton width={200}/></td>
+                                <td>
+                                    <div className="row">
+                                        <div className="col-6 text-right"><Skeleton width={40} height={40}/></div>
+                                        <div className="col-6"><Skeleton width={40} height={40}/></div>
+                                    </div>
+                                </td>
+                            </tr>
                         )
                         :
                         banner?.map((ban, index) => {
                             return(
                                 <tr key={`tablebanner${index}`}>
-                                    <td>{index+1}</td>
+                                    <td>{index+1+offsetBanner}</td>
                                     <td className='text-center'><img src={ban?.SrcBanner} alt="" className='bannertable'/><br />{ban.NameBanner}</td>
                                     <td>{ban?.Judul}</td>
                                     <td>{ban?.Deskripsi}</td>
@@ -97,7 +109,7 @@ export default function Banner() {
                                                     <th>Banner</th>
                                                     <th>Judul</th>
                                                     <th className='w-25'>Deskripsi</th>
-                                                    <th className='d-flex align-items-end'><span>Opsi</span> <Link className='ml-auto' to={'/admin/banner/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link> </th>
+                                                    <th><div className="d-flex align-items-end"><span>Opsi</span> <Link className='ml-auto' to={'/admin/banner/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link></div></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -109,23 +121,27 @@ export default function Banner() {
                                 <div className="row">
                                     <div className="col-5">
                                         <div class="dataTables_info" id="example2_info" role="status" aria-live="polite">
-                                            {totalBanner > 10 ? `Menampilkan 1 hingga 10 dari ${totalBanner} hasil` : `Menampilkan ${totalBanner} hasil`}
+                                            {totalBanner > perPage ? `Menampilkan 1 hingga ${perPage} dari ${totalBanner} hasil` : `Menampilkan ${totalBanner} hasil`}
                                         </div>
                                     </div>
                                     <div className="col-7">
                                         <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
-                                            <ReactPaginate
-                                                containerClassName={"pagination float-right"}
-                                                pageClassName={"page-item user-select-none"}
-                                                pageLinkClassName={"page-link"}
-                                                nextClassName={'page-item user-select-none'}
-                                                pageCount={bannerPageCount}
-                                                activeClassName={"active"}
-                                                nextLinkClassName={'page-link'}
-                                                previousClassName={'page-item user-select-none'}
-                                                previousLinkClassName={'page-link'}
-                                                onPageChange={handlePageClick}
-                                            />
+                                            {totalBanner > perPage ?
+                                                <ReactPaginate
+                                                    containerClassName={"pagination float-right"}
+                                                    pageClassName={"page-item user-select-none"}
+                                                    pageLinkClassName={"page-link"}
+                                                    nextClassName={'page-item user-select-none'}
+                                                    pageCount={bannerPageCount}
+                                                    activeClassName={"active"}
+                                                    nextLinkClassName={'page-link'}
+                                                    previousClassName={'page-item user-select-none'}
+                                                    previousLinkClassName={'page-link'}
+                                                    onPageChange={handlePageClick}
+                                                />
+                                                :
+                                                ''
+                                            }
                                         </div>
                                     </div>
                                 </div>

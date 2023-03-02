@@ -118,14 +118,19 @@ export default function SiteConfig() {
                                 <td><Skeleton width={50}/></td>
                                 <td><Skeleton width={100}/></td>
                                 <td><Skeleton width={200}/></td>
-                                <td><Skeleton width={200}/></td>
+                                <td>
+                                    <div className="row">
+                                        <div className="col-6 text-right"><Skeleton width={40} height={40}/></div>
+                                        <div className="col-6"><Skeleton width={40} height={40}/></div>
+                                    </div>
+                                </td>
                             </tr>
                         )
                         :
                         socialData?.map((soc, index) => {
                             return(
                                 <tr key={`social${index}`}>
-                                    <td>{index + 1}</td>
+                                    <td>{index + 1 + offsetSocial}</td>
                                     <td><h3 dangerouslySetInnerHTML={{ __html: soc.Icon }}></h3></td>
                                     <td>{soc.Nama}</td>
                                     <td>{soc.Link}</td>
@@ -202,7 +207,7 @@ export default function SiteConfig() {
                                                     <th>Icon</th>
                                                     <th>Nama</th>
                                                     <th>Link</th>
-                                                    <th className='d-flex align-items-end'><span>Opsi</span> <Link className='ml-auto' to={'/admin/social/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link> </th>
+                                                    <th><div className='d-flex align-items-end'><span>Opsi</span> <Link className='ml-auto' to={'/admin/social/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link></div></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -214,12 +219,12 @@ export default function SiteConfig() {
                                 <div className="row">
                                     <div className="col-5">
                                         <div class="dataTables_info" id="example2_info" role="status" aria-live="polite">
-                                            {totalSocial > 10 ? `Menampilkan 1 hingga 10 dari ${totalSocial} hasil` : `Menampilkan ${totalSocial} hasil`}
+                                            {totalSocial > perPage ? `Menampilkan 1 hingga ${perPage} dari ${totalSocial} hasil` : `Menampilkan ${totalSocial} hasil`}
                                         </div>
                                     </div>
                                     <div className="col-7">
                                         <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
-                                            {totalSocial > 10 ?
+                                            {totalSocial > perPage ?
                                                 <ReactPaginate
                                                     containerClassName={"pagination float-right"}
                                                     pageClassName={"page-item user-select-none"}

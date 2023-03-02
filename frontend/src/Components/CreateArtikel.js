@@ -138,6 +138,7 @@ export default function CreateArtikel() {
                                                     defaultValue={{ value: 0, label: 'Kategori' }}
                                                     options={options}
                                                     onChange={handleKategori}
+                                                    isSearchable
                                                 />
                                             </div>
                                         </div>

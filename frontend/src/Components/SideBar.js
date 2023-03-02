@@ -17,7 +17,7 @@ export default function SideBar() {
                         <img src="/dist/img/user2-160x160.jpg" className="img-circle elevation-2" alt="User"/>
                     </div>
                     <div className="info">
-                        <a href='?'>Steven</a>
+                        <a href='?'>Ageng</a>
                     </div>
                 </div>
 

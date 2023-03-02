@@ -4,6 +4,7 @@ import Banner from './Components/Banner';
 import Buku from './Components/Buku';
 import CreateArtikel from './Components/CreateArtikel.js';
 import CreateBanner from './Components/CreateBanner.js';
+import CreateBuku from './Components/CreateBuku.js';
 import CreateKategori from './Components/CreateKategori.js';
 import CreateSocial from './Components/CreateSocial';
 import Customer from './Components/Customer';
@@ -34,6 +35,7 @@ function App() {
                     <Route exact path='kategori/create' element={<CreateKategori/>}/>
                     <Route exact path='kategori/:id' element={<EditKategori/>}/>
                     <Route exact path='buku' element={<Buku/>} />
+                    <Route exact path='buku/create' element={<CreateBuku/>} />
                     <Route exact path='customer' element={<Customer/>} />
                     <Route exact path='social/create' element={<CreateSocial/>} />
                     <Route exact path='social/:id' element={<EditSocial/>} />

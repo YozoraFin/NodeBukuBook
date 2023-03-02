@@ -8,6 +8,7 @@ import BannerRouter from './router/BannerRouter.js';
 import ArticleRouter from './router/ArticleRouter.js';
 import KategoriRouter from './router/KategoriRouter.js';
 import BukuRouter from './router/BukuRouter.js';
+import GenreRouter from './router/GenreController.js';
 
 const app = express()
 
@@ -32,5 +33,6 @@ app.use('/banner', BannerRouter)
 app.use('/artikel', ArticleRouter)
 app.use('/kategori', KategoriRouter)
 app.use('/buku', BukuRouter)
+app.use('/genre', GenreRouter)
 
 app.listen(5000, () => {console.log('lesgo')})

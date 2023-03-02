@@ -13,3 +13,41 @@ img {
     object-fit: cover;
     object-position: center;
 }
+
+.selectedfiles {
+    background-color: whitesmoke;
+    padding: 5px;
+    border: 1px solid #252525;
+    border-radius: 5px;
+}
+
+.selectedfiles img {
+    border-radius: 5px;
+    border: 1px solid #ffffff;
+}
+
+.selectedfileswrapper {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.selectedfileswrapper::-webkit-scrollbar {
+    width: 5px;
+    left: -100px;
+    position: absolute;
+}
+
+.selectedfileswrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.selectedfileswrapper::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+    width: 10px;
+}
+
+.selectedfileswrapper::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

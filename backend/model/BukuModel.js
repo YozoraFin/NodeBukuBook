@@ -19,7 +19,7 @@ const Buku = db.define('buku', {
     Harga: {
         type: DataTypes.INTEGER
     },
-    genrehid: {
+    Genreid: {
         type: DataTypes.INTEGER,
     }
 }, {

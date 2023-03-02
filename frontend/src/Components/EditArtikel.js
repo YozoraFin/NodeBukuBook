@@ -56,10 +56,10 @@ export default function EditArtikel() {
     const handleSubmit = (e) => {
         e.preventDefault()
         const MySwal = withReactContent(Swal)
-        let convert = convertToHTML(isi.getCurrentContent())
-        console.log(convert)
         if(isi.getCurrentContent().hasText() && isi.getCurrentContent().getPlainText().length > 0){
+            let convert = convertToHTML(isi.getCurrentContent())
             var formData = new FormData(e.target)
+            formData.append('Isi', convert)
             formData.append('NamaGambar', FileName)
             formData.append('KategoriID', sKategori)
             axios.patch('http://localhost:5000/artikel/'+param.id, formData).then((res) => {
@@ -157,6 +157,7 @@ export default function EditArtikel() {
                                                     defaultValue={{value: 0, label: 'Kategori'}}
                                                     options={options}
                                                     onChange={handleKategori}
+                                                    isSearchable
                                                 />
                                             </div>
                                         </div>
