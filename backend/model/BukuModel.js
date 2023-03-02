@@ -19,9 +19,12 @@ const Buku = db.define('buku', {
     Harga: {
         type: DataTypes.INTEGER
     },
+    Rekomended: {
+        type: DataTypes.INTEGER
+    },
     Genreid: {
         type: DataTypes.INTEGER,
-    }
+    },
 }, {
     freezeTableName: true,
     timestamps: false
@@ -29,6 +32,7 @@ const Buku = db.define('buku', {
 
 Genre.hasMany(Buku, {
     foreignKey: 'genrehid',
+    as: 'Buku'
 });
 Buku.belongsTo(Genre, {
     foreignKey: 'genrehid',

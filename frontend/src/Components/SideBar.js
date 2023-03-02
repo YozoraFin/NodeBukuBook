@@ -30,7 +30,7 @@ export default function SideBar() {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link to={'/admin/buku'} className={location.pathname === '/admin/buku' ? 'nav-link active' : 'nav-link'}>
+                            <Link to={'/admin/buku'} className={location.pathname.indexOf('/buku') > -1  || location.pathname.indexOf('/genre') > -1 ? 'nav-link active' : 'nav-link'}>
                                 <i className="nav-icon fas fa-book"></i>
                                 <p>Buku</p>
                             </Link>

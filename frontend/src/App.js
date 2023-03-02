@@ -5,11 +5,14 @@ import Buku from './Components/Buku';
 import CreateArtikel from './Components/CreateArtikel.js';
 import CreateBanner from './Components/CreateBanner.js';
 import CreateBuku from './Components/CreateBuku.js';
+import CreateGenre from './Components/CreateGenre.js';
 import CreateKategori from './Components/CreateKategori.js';
 import CreateSocial from './Components/CreateSocial';
 import Customer from './Components/Customer';
 import EditArtikel from './Components/EditArtikel.js';
 import EditBanner from './Components/EditBanner.js';
+import EditBuku from './Components/EditBuku.js';
+import EditGenre from './Components/EditGenre.js';
 import EditKategori from './Components/EditKategori.js';
 import EditSocial from './Components/EditSocial';
 import Header from './Components/Header';
@@ -36,6 +39,9 @@ function App() {
                     <Route exact path='kategori/:id' element={<EditKategori/>}/>
                     <Route exact path='buku' element={<Buku/>} />
                     <Route exact path='buku/create' element={<CreateBuku/>} />
+                    <Route exact path='buku/:id' element={<EditBuku/>} />
+                    <Route exact path='genre/create' element={<CreateGenre/>} />
+                    <Route exact path='genre/:id' element={<EditGenre/>} />
                     <Route exact path='customer' element={<Customer/>} />
                     <Route exact path='social/create' element={<CreateSocial/>} />
                     <Route exact path='social/:id' element={<EditSocial/>} />

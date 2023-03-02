@@ -51,3 +51,7 @@ img {
 .selectedfileswrapper::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+.content-wrapper {
+    min-height: 100%;
+}

@@ -120,9 +120,9 @@ export default function EditArtikel() {
             <div className="container-fluid">
                 <div className="row pt-3 px-3">
                     <div className="col-12">
-                        <div className="card card-success">
+                        <div className="card card-info">
                             <div className="card-header">
-                                <h3 className="card-title">Buat Artikel</h3>
+                                <h3 className="card-title">Edit Artikel</h3>
                             </div>
                             <form onSubmit={handleSubmit}>
                                 <div className="card-body">

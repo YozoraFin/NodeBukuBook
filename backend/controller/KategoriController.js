@@ -4,11 +4,26 @@ import Article from "../model/ArticleModel.js"
 export const getKategori = async(req, res) => {
     try {
         const kategori = await Kategori.findAll({
-            attributes: ['id', 'Kategori']
+            attributes: ['id', 'Kategori'],
+            include: [
+                {
+                    model: Article,
+                    as: 'Artikel'
+                }
+            ]
         })
+        var kategoribaru = []
+        for (let index = 0; index < kategori.length; index++) {
+            const element = kategori[index];
+            kategoribaru.push({
+                id: element.id,
+                Kategori: element.Kategori,
+                Total: element.Artikel.length 
+            })
+        }
         res.json({
             status: 200,
-            data: kategori,
+            data: kategoribaru,
             message: 'Ok'
         })
     } catch (error) {

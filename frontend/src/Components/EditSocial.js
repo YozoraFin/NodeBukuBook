@@ -43,7 +43,7 @@ export default function EditSocial() {
             <div className="container-fluid">
                 <div className="row pt-3 pl-3">
                     <div className="col-md-4">
-                        <div className="card card-success">
+                        <div className="card card-info">
                             <div className="card-header">
                                 <h3 className="card-title">Edit {namaSocial} <span className='ml-3' dangerouslySetInnerHTML={{ __html: iconSocial }}></span></h3>
                             </div>

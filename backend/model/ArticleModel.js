@@ -30,9 +30,13 @@ const Article = db.define('bukubook_content_articlepage', {
     timestamps: false
 })
 
-Kategori.hasMany(Article)
+Kategori.hasMany(Article, {
+    foreignKey: 'KategoriID',
+    as: 'Artikel'
+})
 Article.belongsTo(Kategori, {
-    foreignKey: 'KategoriID'
+    foreignKey: 'KategoriID',
+    as: 'Kategori'
 })
 
 export default Article

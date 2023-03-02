@@ -12,7 +12,11 @@ export const getArticle = async(req, res) => {
                 },
                 include: [{
                     model: Kategori,
-                }]
+                    as: 'Kategori'
+                }],
+                order: [
+                    ['id', 'DESC']
+                ]
             })
         } else if(!req.query.penulis && req.query.kategori) {
             articledata = await Article.findAll({
@@ -21,15 +25,23 @@ export const getArticle = async(req, res) => {
                     model: Kategori,
                     where: {
                         Kategori: req.query.kategori
-                    }
-                }]
+                    },
+                    as: 'Kategori'
+                }],
+                order: [
+                    ['id', 'DESC']
+                ]
             })
         } else {
             articledata = await Article.findAll({
                 attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar'],
                 include: [{
-                    model: Kategori
-                }]
+                    model: Kategori,
+                    as: 'Kategori'
+                }],
+                order: [
+                    ['id', 'DESC']
+                ]
             })
         }
         res.status(200).json({
@@ -50,6 +62,28 @@ export const getDetailArticle = async(req, res) => {
                 id: req.params.id
             }
         })
+        const fullarticle = await Article.findAll({
+            attributes: ['id', 'Judul', 'NamaGambar']
+        })
+        let count = 1
+        let next = {
+            id: 0
+        }
+        let prev = {
+            id: 0
+        }
+        for (let index = 0; index < fullarticle.length; index++) {
+            const element = fullarticle[index].id;
+            if(Number(req.params.id) === element) {
+                count = index
+            }
+        }
+        if(count < fullarticle.length-1) {
+            next = fullarticle[count+1]
+        }
+        if(count !== 0) {
+            prev = fullarticle[count-1]
+        }
         let kategori
         if(article.KategoriID === 0) {
             kategori = 'Kategori'
@@ -71,13 +105,16 @@ export const getDetailArticle = async(req, res) => {
             KategoriID: article.KategoriID,
             SrcGambar: article.SrcGambar,
             Kategori: kategori,
-            NamaGambar: article.NamaGambar
+            NamaGambar: article.NamaGambar,
+            Next: next,
+            Prev: prev
         }
         res.json({
             status: 200,
             data: data,
             message: 'Ok'
         })
+        
     } catch (error) {
         console.log(error)
     }

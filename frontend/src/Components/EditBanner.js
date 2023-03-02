@@ -42,7 +42,7 @@ export default function EditBanner() {
                 })
             } else {
                 MySwal.fire({
-                    title: 'Gagal menambahkan',
+                    title: 'Gagal memperbarui',
                     text: 'Sepertinya server sedang mengalami masalah, cobalah lagi setelah beberapa saat',
                     icon: 'error'
                 })
@@ -58,7 +58,7 @@ export default function EditBanner() {
             <div className="container-fluid">
                 <div className="row pt-3 px-3">
                     <div className="col-md-6">
-                        <div className="card card-success">
+                        <div className="card card-info">
                             <div className="card-header">
                                 <h3 className="card-title">Edit Banner</h3>
                             </div>
