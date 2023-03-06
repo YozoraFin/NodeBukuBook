@@ -21,12 +21,14 @@ export default function EditBuku() {const [arrFile, setArrFile] = useState([])
     })
     const [genre, setGenre] = useState([])
     const [loadingGenre, setLoadingGenre] = useState(true)
+    const [rekomended, setRekomended] = useState(0)
     const [sinopsis, setSinopsis] = useState(EditorState.createWithContent(
         ContentState.createFromBlockArray(
           convertFromHTML('<p></p>')
         )
     ))
     const param = useParams()
+    const navigate = useNavigate()
 
     const getGenre = () => {
         axios.get('http://localhost:5000/genre').then((res) => {
@@ -53,6 +55,7 @@ export default function EditBuku() {const [arrFile, setArrFile] = useState([])
                   convertFromHTML(res.data.data?.Sinopsis)
                 )
             ))
+            setRekomended(res.data.data?.Rekomended)
         })
     }
 
@@ -123,7 +126,13 @@ export default function EditBuku() {const [arrFile, setArrFile] = useState([])
         setFileStatus(!fileStatus)
     }
 
-    console.log(arrFile)
+    const handleRekomended = (e) => {
+        if(e.target.checked) {
+            setRekomended(1)
+        } else {
+            setRekomended(0)
+        }
+    }
 
     const handleSplice = () => {
         var splice = arrFile.map((arr, index) => {
@@ -163,12 +172,14 @@ export default function EditBuku() {const [arrFile, setArrFile] = useState([])
     const handleSubmit = (e) => {
         e.preventDefault()
         const MySwal = withReactContent(Swal)
+        console.log(rekomended)
         if(sinopsis.getCurrentContent().hasText() && sinopsis.getCurrentContent().getPlainText().length > 0) {
             var convert = convertToHTML(sinopsis.getCurrentContent())
             var formData = new FormData(e.target)
             formData.append('Genreid', selectedGenre.value)
             formData.append('Sinopsis', convert)
             formData.append('genrehid', selectedGenre.value)
+            formData.append('Rekomended', rekomended)
             if(arrFile.length > 0) {
                 for (let index = 0; index < arrFile.length; index++) {
                     const element = arrFile[index];
@@ -183,6 +194,8 @@ export default function EditBuku() {const [arrFile, setArrFile] = useState([])
                     MySwal.fire({
                         title: 'Buku berhasil diperbarui',
                         icon: 'success'
+                    }).then(() => {
+                        navigate('/admin/buku')
                     })
                 } else {
                     MySwal.fire({
@@ -230,6 +243,15 @@ export default function EditBuku() {const [arrFile, setArrFile] = useState([])
                                                 <input value={stok} onChange={(e) => {setStok(e.target.value)}} required type="text" className="form-control" id="StokBuku" name='Stok' />
                                             </div>
                                             <div className="form-group">
+                                                <label htmlFor="">Rekomended</label>
+                                                <div className="form-check">
+                                                    <input onChange={handleRekomended} checked={rekomended === 1} type="checkbox" className="form-check-input" />
+                                                    <label className="form-check-label">
+                                                        Rekomended
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div className="form-group">
                                                 <label htmlFor="GenreBuku">Genre</label>
                                                 <Select
                                                     defaultValue={{ value: 0, label: 'Genre' }}
@@ -266,7 +288,7 @@ export default function EditBuku() {const [arrFile, setArrFile] = useState([])
                                         </div>
                                     </div>
                                 </div>
-                                <div className="card-footer"><button className="btn btn-primary float-right">Tambahkan</button></div>
+                                <div className="card-footer"><button className="btn btn-primary float-right">Perbarui</button></div>
                             </form>
                         </div>
                     </div>

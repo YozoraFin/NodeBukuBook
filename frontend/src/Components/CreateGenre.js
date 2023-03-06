@@ -39,7 +39,7 @@ export default function CreateGenre() {
                     <div className="col-4">
                         <div className="card card-success">
                             <div className="card-header">
-                                <h3 className="card-title">Buat Genre</h3>
+                                <h3 className="card-title">Tambahkan Genre</h3>
                             </div>
                             <form onSubmit={handleSubmit}>
                                 <div className="card-body">

@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import db from "../config/Database.js";
 import Kategori from "./KategoriModel.js";
+import Komentar from "./KomentarModel.js";
 
 const {DataTypes} = Sequelize
 const Article = db.define('bukubook_content_articlepage', {
@@ -24,6 +25,9 @@ const Article = db.define('bukubook_content_articlepage', {
     },
     NamaGambar: {
         type: DataTypes.TEXT
+    },
+    Tanggal: {
+        type: DataTypes.STRING
     }
 }, {
     freezeTableName: true,
@@ -37,6 +41,13 @@ Kategori.hasMany(Article, {
 Article.belongsTo(Kategori, {
     foreignKey: 'KategoriID',
     as: 'Kategori'
+})
+Article.hasMany(Komentar, {
+    foreignKey: 'ArticleID',
+    as: 'Komentar'
+})
+Komentar.belongsTo(Article, {
+    as: 'Artikel'
 })
 
 export default Article

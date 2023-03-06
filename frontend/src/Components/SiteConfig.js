@@ -6,10 +6,9 @@ import { Editor } from 'react-draft-wysiwyg';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { convertToHTML } from 'draft-convert';
-import Skeleton from 'react-loading-skeleton'
 import { Link } from 'react-router-dom';
 import 'react-loading-skeleton/dist/skeleton.css'
-import ReactPaginate from 'react-paginate';
+import DataTable from 'react-data-table-component';
 
 export default function SiteConfig() {
     const [tentang, setTentang] = useState(EditorState.createWithContent(
@@ -23,14 +22,6 @@ export default function SiteConfig() {
     const [alamat, setAlamat] = useState('')
     const [socialData, setSocialData] = useState([])
     const [loadingSocial, setLoadingSocial] = useState(true)
-    const [offsetSocial, setOffsetSocial] = useState(0)
-    const [totalSocial, setTotalSocial] = useState(0)
-    const [socialCount, setSocialCount] = useState(0)
-    const perPage = 10
-
-    const handlePageSocial = (e) => {
-        setOffsetSocial(e.selected*perPage)
-    }
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -92,10 +83,7 @@ export default function SiteConfig() {
 
     const getSocial = () => {
         axios.get('http://localhost:5000/social').then((res) => {
-            const slice = res.data.data?.slice(offsetSocial, offsetSocial+perPage)
-            setSocialData(slice)
-            setSocialCount(Math.ceil(res.data.data?.length / perPage))
-            setTotalSocial(res.data.data?.length)
+            setSocialData(res.data.data)
         }).catch((err) => {
             console.log(err)
         }).finally(() => {
@@ -105,39 +93,41 @@ export default function SiteConfig() {
 
     useEffect(() => {
         getSocial()
-    }, [offsetSocial])
+    }, [])
 
     useEffect(() => {
         getData()
     }, [])
 
-    const socialtable = loadingSocial ?
-                        (
-                            <tr>
-                                <td><Skeleton width={20}/></td>
-                                <td><Skeleton width={50}/></td>
-                                <td><Skeleton width={100}/></td>
-                                <td><Skeleton width={200}/></td>
-                                <td>
-                                    <div className="row">
-                                        <div className="col-6 text-right"><Skeleton width={40} height={40}/></div>
-                                        <div className="col-6"><Skeleton width={40} height={40}/></div>
-                                    </div>
-                                </td>
-                            </tr>
-                        )
-                        :
-                        socialData?.map((soc, index) => {
-                            return(
-                                <tr key={`social${index}`}>
-                                    <td>{index + 1 + offsetSocial}</td>
-                                    <td><h3 dangerouslySetInnerHTML={{ __html: soc.Icon }}></h3></td>
-                                    <td>{soc.Nama}</td>
-                                    <td>{soc.Link}</td>
-                                    <th className='text-center'><Link to={`/admin/social/${soc.id}`} className='mr-2'><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeletSocial(soc.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></th>
-                                </tr>
-                            )
-                        })
+    const columnSocial = [
+        {
+            name: 'Icon',
+            selector: row => <h3 dangerouslySetInnerHTML={{ __html: row.Icon }}></h3>
+        },
+        {
+            name: 'Nama',
+            selector: row => row.Nama,
+            sortable: true
+        },
+        {
+            name: 'Link',
+            selector: row => row.Link,
+        },
+        {
+            name: 'Opsi',
+            selector: row => <div className="text-center"><Link to={`/admin/social/${row.id}`} className='mr-2'><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeletSocial(row.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></div>,
+            width: '180px'
+        }
+    ]
+
+    const customStyle = {
+        headCells: {
+            style: {
+                fontSize: '20px',
+                fontWeight: 'bold'
+            }
+        }
+    }
 
     return (
         <section className="content content-wrapper">
@@ -196,53 +186,16 @@ export default function SiteConfig() {
                         <div className="card card-primary">
                             <div className="card-header">
                                 <h3 className="card-title">Media Social</h3>
+                                <Link className='float-right' to={'/admin/social/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link>
                             </div>
                             <div className="card-body">
-                                <div className="row">
-                                    <div className="col-12">
-                                        <table className="table table-bordered table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Icon</th>
-                                                    <th>Nama</th>
-                                                    <th>Link</th>
-                                                    <th><div className='d-flex align-items-end'><span>Opsi</span> <Link className='ml-auto' to={'/admin/social/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link></div></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {socialtable}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-5">
-                                        <div class="dataTables_info" id="example2_info" role="status" aria-live="polite">
-                                            {totalSocial > perPage ? `Menampilkan 1 hingga ${perPage} dari ${totalSocial} hasil` : `Menampilkan ${totalSocial} hasil`}
-                                        </div>
-                                    </div>
-                                    <div className="col-7">
-                                        <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
-                                            {totalSocial > perPage ?
-                                                <ReactPaginate
-                                                    containerClassName={"pagination float-right"}
-                                                    pageClassName={"page-item user-select-none"}
-                                                    pageLinkClassName={"page-link"}
-                                                    nextClassName={'page-item user-select-none'}
-                                                    pageCount={socialCount}
-                                                    activeClassName={"active"}
-                                                    nextLinkClassName={'page-link'}
-                                                    previousClassName={'page-item user-select-none'}
-                                                    previousLinkClassName={'page-link'}
-                                                    onPageChange={handlePageSocial}
-                                                />
-                                                :
-                                                ''
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
+                                <DataTable
+                                    columns={columnSocial}
+                                    data={socialData}
+                                    customStyles={customStyle}
+                                    pagination
+                                    progressPending={loadingSocial}
+                                />
                             </div>
                         </div>
                     </div>

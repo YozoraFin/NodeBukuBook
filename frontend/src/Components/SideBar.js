@@ -47,12 +47,6 @@ export default function SideBar() {
                                 <p>Banner</p>
                             </Link>
                         </li>
-                        <li className="nav-item">
-                            <Link to={'/admin/customer'} className={location.pathname === '/admin/customer' ? 'nav-link active' : 'nav-link'}>
-                                <i className="nav-icon far fa-user"></i>
-                                <p>Customer</p>
-                            </Link>
-                        </li>
                     </ul>
                 </nav>
             </div>

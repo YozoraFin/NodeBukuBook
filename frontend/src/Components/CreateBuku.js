@@ -19,6 +19,7 @@ export default function CreateBuku() {
           convertFromHTML('<p></p>')
         )
     ))
+    const [rekomended, setRekomended] = useState(0)
     const navigate = useNavigate()
 
     const getGenre = () => {
@@ -50,6 +51,14 @@ export default function CreateBuku() {
             })
         }
         setArrFile(arrayfile)
+    }
+
+    const handleRekomended = (e) => {
+        if(e.target.checked) {
+            setRekomended(1)
+        } else {
+            setRekomended(0)
+        }
     }
 
     const handleFileDelete = (id) => {
@@ -142,7 +151,7 @@ export default function CreateBuku() {
                     <div className="col-12">
                         <div className="card card-success">
                             <div className="card-header">
-                                <h3 className="card-title">Create Buku</h3>
+                                <h3 className="card-title">Tambahkan Buku</h3>
                             </div>
                             <form onSubmit={handleSubmit}>
                                 <div className="card-body">
@@ -163,6 +172,15 @@ export default function CreateBuku() {
                                             <div className="form-group">
                                                 <label htmlFor="StokBuku">Stok</label>
                                                 <input required type="text" className="form-control" id="StokBuku" name='Stok' />
+                                            </div>
+                                            <div className="form-group">
+                                                <label htmlFor="">Rekomended</label>
+                                                <div className="form-check">
+                                                    <input onChange={handleRekomended} checked={rekomended === 1} type="checkbox" className="form-check-input" />
+                                                    <label className="form-check-label">
+                                                        Rekomended
+                                                    </label>
+                                                </div>
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="GenreBuku">Genre</label>

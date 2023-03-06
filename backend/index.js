@@ -10,6 +10,8 @@ import KategoriRouter from './router/KategoriRouter.js';
 import BukuRouter from './router/BukuRouter.js';
 import GenreRouter from './router/GenreController.js';
 import SampulRouter from './router/SampulRouter.js';
+import CustomerRouter from './router/CustomerRouter.js';
+import KomentarRouter from './router/KomentarRouter.js';
 
 const app = express()
 
@@ -36,5 +38,7 @@ app.use('/kategori', KategoriRouter)
 app.use('/buku', BukuRouter)
 app.use('/genre', GenreRouter)
 app.use('/sampul', SampulRouter)
+app.use('/customer', CustomerRouter)
+app.use('/komentar', KomentarRouter)
 
 app.listen(5000, () => {console.log('lesgo')})

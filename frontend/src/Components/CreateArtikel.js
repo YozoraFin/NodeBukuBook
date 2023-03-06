@@ -104,7 +104,7 @@ export default function CreateArtikel() {
                     <div className="col-12">
                         <div className="card card-success">
                             <div className="card-header">
-                                <h3 className="card-title">Buat Artikel</h3>
+                                <h3 className="card-title">Tambahkan Artikel</h3>
                             </div>
                             <form onSubmit={handleSubmit}>
                                 <div className="card-body">

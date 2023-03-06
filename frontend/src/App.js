@@ -8,18 +8,15 @@ import CreateBuku from './Components/CreateBuku.js';
 import CreateGenre from './Components/CreateGenre.js';
 import CreateKategori from './Components/CreateKategori.js';
 import CreateSocial from './Components/CreateSocial';
-import Customer from './Components/Customer';
 import EditArtikel from './Components/EditArtikel.js';
 import EditBanner from './Components/EditBanner.js';
 import EditBuku from './Components/EditBuku.js';
 import EditGenre from './Components/EditGenre.js';
 import EditKategori from './Components/EditKategori.js';
 import EditSocial from './Components/EditSocial';
-import Header from './Components/Header';
 import LoginAdmin from './Components/LoginAdmin';
 import Main from './Components/Main';
 import Portal from './Components/Portal';
-import SideBar from './Components/SideBar.js';
 import SiteConfig from './Components/SiteConfig';
 
 function App() {
@@ -42,7 +39,6 @@ function App() {
                     <Route exact path='buku/:id' element={<EditBuku/>} />
                     <Route exact path='genre/create' element={<CreateGenre/>} />
                     <Route exact path='genre/:id' element={<EditGenre/>} />
-                    <Route exact path='customer' element={<Customer/>} />
                     <Route exact path='social/create' element={<CreateSocial/>} />
                     <Route exact path='social/:id' element={<EditSocial/>} />
                 </Route>

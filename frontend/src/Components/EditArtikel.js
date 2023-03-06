@@ -175,7 +175,7 @@ export default function EditArtikel() {
                                     </div>
                                 </div>
                                 <div className="card-footer">
-                                    <button className="btn btn-primary float-right">Tambahkan</button>
+                                    <button className="btn btn-primary float-right">Perbarui</button>
                                 </div>
                             </form>
                         </div>

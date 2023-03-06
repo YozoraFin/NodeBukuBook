@@ -116,7 +116,10 @@ export const getRekomendedBuku = async(req, res) => {
     try {
         const buku = await Buku.findAll({
             where: {
-                Rekomended: 1
+                Rekomended: 1,
+                Stok: {
+                    [Op.gt]: 0
+                }
             },
             order: [
                 ['ID', 'DESC']
@@ -145,22 +148,27 @@ export const getRekomendedBuku = async(req, res) => {
 
 export const getBestBuku = async(req, res) => {
     try {
-        const id = await db.query('SELECT BukuID FROM `bukubook_content_orderdetail` GROUP BY BukuID ORDER BY SUM(Quantity) DESC LIMIT 8', {type: QueryTypes.SELECT})
-        console.log(id)
+        const id = await db.query('SELECT BukuID FROM `bukubook_content_orderdetail` GROUP BY BukuID ORDER BY SUM(Quantity) DESC', {type: QueryTypes.SELECT})
         let data = []
         for (let index = 0; index < id.length; index++) {
             const element = id[index];
-            var buku = await Buku.findAll({
+            var buku = await Buku.findOne({
                 where: {
                     id: element.BukuID
-                }
+                },
+                include: [
+                    {
+                        model: Sampul,
+                        as: 'Sampul'
+                    }
+                ]
             })
-            data.push({
-                
-            })
+            if(buku.Stok > 0) {
+                data.push(buku)
+            }
         }
         res.json({
-            data: id
+            data: data
         })
     } catch (error) {
         console.log(error)
@@ -170,7 +178,7 @@ export const getBestBuku = async(req, res) => {
 export const getDetailBuku = async(req, res) => {
     try {
         const buku = await Buku.findOne({
-            attributes: [['ID', 'IDbuku'], 'Judul', 'Sinopsis', 'Penulis', 'Harga', 'Stok', 'Genreid', 'genrehid'],
+            attributes: [['ID', 'IDbuku'], 'Judul', 'Sinopsis', 'Penulis', 'Harga', 'Stok', 'Genreid', 'genrehid', 'Rekomended'],
             where: {
                 ID: req.params.id
             },
@@ -225,16 +233,23 @@ export const createBuku = async(req, res) => {
 export const updateBuku = async(req, res) => {
     try {
         if(req.files.length > 0) {
-            const buku = await Buku.update(req.body, {
+            await Buku.update(req.body, {
                 where: {
                     ID: req.params.id
                 }
             })
+            let NamaGambar
+            if(req.files.length === 1) {
+                NamaGambar = req.body.NamaGambar
+            }
             for (let index = 0; index < req.files.length; index++) {
                 const element = req.files[index];
+                if(req.files.length > 1) {
+                    NamaGambar = req.body.NamaGambar[index]
+                }
                 var newVal ={
                     SrcGambar: 'http://127.0.0.1:5000/foto/buku/'+element.filename,
-                    NamaGambar: req.body.NamaGambar[index],
+                    NamaGambar: NamaGambar,
                     BukuID: req.params.id
                 }
                 await Sampul.create(newVal)

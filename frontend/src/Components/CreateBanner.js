@@ -46,7 +46,7 @@ export default function CreateBanner() {
                     <div className="col-md-6">
                         <div className="card card-success">
                             <div className="card-header">
-                                <h3 className="card-title">Buat Banner</h3>
+                                <h3 className="card-title">Tambahkan Banner</h3>
                             </div>
                             <form onSubmit={handleSubmit}>
                                 <div className="card-body">

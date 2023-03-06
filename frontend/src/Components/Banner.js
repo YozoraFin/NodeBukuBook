@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import DataTable from 'react-data-table-component'
 import Skeleton from 'react-loading-skeleton'
 import ReactPaginate from 'react-paginate'
 import { Link } from 'react-router-dom'
@@ -9,21 +10,11 @@ import withReactContent from 'sweetalert2-react-content'
 export default function Banner() {
     const [banner, setBanner] = useState([])
     const [loadingBanner, setLoadingBanner] = useState(true)
-    const [offsetBanner, setOffsetBanner] = useState(0)
-    const [bannerPageCount, setBannerPageCount] = useState(0)
-    const [totalBanner, setTotalBanner] = useState(0)
     const perPage = 10
-
-    const handlePageClick = (e) => {
-        setOffsetBanner(e.selected*perPage)
-    }
 
     const getData = () => {
         axios.get('http://localhost:5000/banner').then((res) => {
-            const slice = res.data.data?.slice(offsetBanner, offsetBanner + perPage)
-            setBanner(slice)
-            setBannerPageCount(Math.ceil(res.data.data?.length / perPage))
-            setTotalBanner(res.data.data?.length)
+            setBanner(res.data.data)
         }).catch((error) => {
             console.log(error)
         }).finally(() => {
@@ -58,35 +49,38 @@ export default function Banner() {
 
     useEffect(() => {
         getData()
-    }, [offsetBanner])
+    }, [])
 
-    const dataBanner = loadingBanner ?
-                        (
-                            <tr>
-                                <td><Skeleton width={20}/></td>
-                                <td className='text-center'><Skeleton className='bannertable'/><br /><Skeleton width={200} /></td>
-                                <td><Skeleton width={175} /></td>
-                                <td><Skeleton width={300} count={2} /><Skeleton width={200}/></td>
-                                <td>
-                                    <div className="row">
-                                        <div className="col-6 text-right"><Skeleton width={40} height={40}/></div>
-                                        <div className="col-6"><Skeleton width={40} height={40}/></div>
-                                    </div>
-                                </td>
-                            </tr>
-                        )
-                        :
-                        banner?.map((ban, index) => {
-                            return(
-                                <tr key={`tablebanner${index}`}>
-                                    <td>{index+1+offsetBanner}</td>
-                                    <td className='text-center'><img src={ban?.SrcBanner} alt="" className='bannertable'/><br />{ban.NameBanner}</td>
-                                    <td>{ban?.Judul}</td>
-                                    <td>{ban?.Deskripsi}</td>
-                                    <td className='text-center'><Link className='mr-2' to={'/admin/banner/'+ban.id}><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {deleteBanner(ban?.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></td>
-                                </tr>
-                            )
-                        })
+    const customStyle = {
+        headCells: {
+            style: {
+                fontSize: '20px',
+                fontWeight: 'bold'
+            }
+        }
+    }
+    
+    const columnBanner = [
+        {
+            name: 'Banner',
+            selector: row => <div className="text-center"><img src={row?.SrcBanner} alt="" className='bannertable'/><br />{row.NameBanner}</div>
+        },
+        {
+            name: 'Judul',
+            selector: row => row?.Judul,
+            sortable: true
+        },
+        {
+            name: 'Deskripsi',
+            selector: row => row?.Deskripsi,
+            sortable: true
+        },
+        {
+            name: 'Opsi',
+            selector: row => <div><Link className='mr-2' to={'/admin/banner/'+row.id}><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {deleteBanner(row?.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></div>,
+            width: '180px'
+        },
+    ]
 
     return (
         <section className="content content-wrapper">
@@ -95,56 +89,17 @@ export default function Banner() {
                     <div className="col-12">
                         <div className="card card-primary">
                             <div className="card-header">
-                                <h3 className="card-title">
-                                    Banner
-                                </h3>
+                                <h3 className="card-title">Banner</h3>
+                                <Link className='float-right' to={'/admin/banner/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link>
                             </div>
                             <div className="card-body">
-                                <div className="row">
-                                    <div className="col-12">
-                                        <table className="table table-bordered table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Banner</th>
-                                                    <th>Judul</th>
-                                                    <th className='w-25'>Deskripsi</th>
-                                                    <th><div className="d-flex align-items-end"><span>Opsi</span> <Link className='ml-auto' to={'/admin/banner/create'}><button className="btn btn-success"><i className="fa-solid fa-plus"></i></button></Link></div></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {dataBanner}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-5">
-                                        <div class="dataTables_info" id="example2_info" role="status" aria-live="polite">
-                                            {totalBanner > perPage ? `Menampilkan 1 hingga ${perPage} dari ${totalBanner} hasil` : `Menampilkan ${totalBanner} hasil`}
-                                        </div>
-                                    </div>
-                                    <div className="col-7">
-                                        <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
-                                            {totalBanner > perPage ?
-                                                <ReactPaginate
-                                                    containerClassName={"pagination float-right"}
-                                                    pageClassName={"page-item user-select-none"}
-                                                    pageLinkClassName={"page-link"}
-                                                    nextClassName={'page-item user-select-none'}
-                                                    pageCount={bannerPageCount}
-                                                    activeClassName={"active"}
-                                                    nextLinkClassName={'page-link'}
-                                                    previousClassName={'page-item user-select-none'}
-                                                    previousLinkClassName={'page-link'}
-                                                    onPageChange={handlePageClick}
-                                                />
-                                                :
-                                                ''
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
+                                <DataTable
+                                    columns={columnBanner}
+                                    data={banner}
+                                    customStyles={customStyle}
+                                    pagination
+                                    progressPending={loadingBanner}
+                                />
                             </div>
                         </div>
                     </div>

@@ -45,7 +45,7 @@ export default function EditSocial() {
                     <div className="col-md-4">
                         <div className="card card-info">
                             <div className="card-header">
-                                <h3 className="card-title">Edit {namaSocial} <span className='ml-3' dangerouslySetInnerHTML={{ __html: iconSocial }}></span></h3>
+                                <h3 className="card-title">Edit Social</h3>
                             </div>
                             <form onSubmit={handleUpdate}>
                                 <div className="card-body">

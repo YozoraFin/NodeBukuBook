@@ -1,12 +1,14 @@
 import Article from "../model/ArticleModel.js"
+import Customer from "../model/CustomerModel.js"
 import Kategori from "../model/KategoriModel.js"
+import Komentar from "../model/KomentarModel.js"
 
 export const getArticle = async(req, res) => {
     try {
         let articledata
         if(!req.query.kategori && req.query.penulis) {
             articledata = await Article.findAll({
-                attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar'],
+                attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar', 'Tanggal'],
                 where: {
                     Penulis: req.query.penulis
                 },
@@ -20,7 +22,7 @@ export const getArticle = async(req, res) => {
             })
         } else if(!req.query.penulis && req.query.kategori) {
             articledata = await Article.findAll({
-                attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar'],
+                attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar', 'Tanggal'],
                 include: [{
                     model: Kategori,
                     where: {
@@ -34,7 +36,7 @@ export const getArticle = async(req, res) => {
             })
         } else {
             articledata = await Article.findAll({
-                attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar'],
+                attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar', 'Tanggal'],
                 include: [{
                     model: Kategori,
                     as: 'Kategori'
@@ -57,10 +59,28 @@ export const getArticle = async(req, res) => {
 export const getDetailArticle = async(req, res) => {
     try {
         const article = await Article.findOne({
-            attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar'],
+            attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar', 'Tanggal'],
             where: {
                 id: req.params.id
-            }
+            },
+            include: [
+                {
+                    model: Komentar,
+                    as: 'Komentar',
+                    attributes: ['Komentar', 'Tanggal'],
+                    include: [
+                        {
+                            model: Customer,
+                            as: 'Customer',
+                            attributes: ['NamaLengkap', 'Profil']
+                        }
+                    ],
+                    separate: true,
+                    order: [
+                        ['ID', 'DESC']
+                    ]
+                }
+            ]
         })
         const fullarticle = await Article.findAll({
             attributes: ['id', 'Judul', 'NamaGambar']
@@ -96,6 +116,14 @@ export const getDetailArticle = async(req, res) => {
             })
             kategori = kat.Kategori
         }
+        let customer = []
+        let tanggal = []
+        for (let index = 0; index < article.Komentar.length; index++) {
+            const element = article.Komentar[index];
+            customer.push(element.Customer)
+            tanggal.push(element.Tanggal)
+        }
+
         const data = {
             id: article.id,
             Judul: article.Judul,
@@ -106,8 +134,11 @@ export const getDetailArticle = async(req, res) => {
             SrcGambar: article.SrcGambar,
             Kategori: kategori,
             NamaGambar: article.NamaGambar,
+            Tanggal: article.Tanggal,
             Next: next,
-            Prev: prev
+            Prev: prev,
+            Komentar: article.Komentar,
+            JumlahKomen: article.Komentar.length
         }
         res.json({
             status: 200,
@@ -129,6 +160,8 @@ export const createArticle = async(req, res) => {
                 message: 'Ok'
             })
         } else {
+            const month = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Ags","Sep","Okt","Nov","Des"];
+            const date = new Date()
             var newVal = {
                 Judul: req.body.Judul,
                 Isi: req.body.Isi,
@@ -136,7 +169,8 @@ export const createArticle = async(req, res) => {
                 Teaser: req.body.Teaser,
                 KategoriID: req.body.KategoriID,
                 SrcGambar: 'http://127.0.0.1:5000/foto/artikel/'+req.file.filename,
-                NamaGambar: req.body.NamaGambar
+                NamaGambar: req.body.NamaGambar,
+                Tanggal: `${date.getDate()} ${month[date.getMonth()]}, ${date.getFullYear()}` 
             }
             await Article.create(newVal)
             res.json({
@@ -191,6 +225,11 @@ export const deleteArticle = async(req, res) => {
         await Article.destroy({
             where: {
                 id: req.params.id
+            }
+        })
+        await Komentar.destroy({
+            where: {
+                ArticleID: req.params.id
             }
         })
         res.json({

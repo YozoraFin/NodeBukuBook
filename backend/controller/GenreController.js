@@ -90,6 +90,16 @@ export const deleteGenre = async(req, res) => {
                 ID: req.params.id
             }
         })
+        const newVal = {
+            Genrehid: 0,
+            Genreid: 0
+        }
+        await Buku.update(newVal, {
+            where: {
+                Genrehid: req.params.id
+            }
+        })
+
         res.json({
             status: 200,
             message: 'Ok'

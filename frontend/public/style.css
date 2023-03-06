@@ -34,8 +34,10 @@ img {
 
 .selectedfileswrapper::-webkit-scrollbar {
     width: 5px;
-    left: -100px;
-    position: absolute;
+}
+
+.selectedfileswrapper::-webkit-scrollbar:hover {
+    width: 20px;
 }
 
 .selectedfileswrapper::-webkit-scrollbar-track {
@@ -50,6 +52,7 @@ img {
 
 .selectedfileswrapper::-webkit-scrollbar-thumb:hover {
     background: #555;
+    width: 20px;
 }
 
 .content-wrapper {

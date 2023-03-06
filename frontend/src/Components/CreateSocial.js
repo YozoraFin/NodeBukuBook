@@ -35,7 +35,7 @@ export default function CreateSocial() {
                     <div className="col-md-4">
                         <div className="card card-success">
                             <div className="card-header">
-                                <h3 className="card-title">Buat</h3>
+                                <h3 className="card-title">Tambahkan Social</h3>
                             </div>
                             <form onSubmit={handleUpdate}>
                                 <div className="card-body">
