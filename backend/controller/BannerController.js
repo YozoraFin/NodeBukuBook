@@ -1,4 +1,5 @@
 import Banner from "../model/BannerModel.js"
+import fs from "fs"
 
 export const getBanner = async(req, res) => {
     try {
@@ -72,6 +73,16 @@ export const updateBanner = async(req, res) => {
                 message: 'OK'
             })
         } else {
+            const banner = Banner.findOne({
+                where: {
+                    id: req.params.id
+                }
+            })
+
+            fs.unlink(banner.SrcBanner.replace('http://127.0.0.1:5000', '.'), (err => {
+                if(err) console.log(err)
+            }))
+
             var newVal = {
                 Judul: req.body.Judul,
                 Deskripsi: req.body.Deskripsi,
@@ -95,6 +106,16 @@ export const updateBanner = async(req, res) => {
 
 export const deleteBanner = async(req, res) => {
     try {
+        const banner = await Banner.findOne({
+            where: {
+                id: req.params.id
+            }
+        })
+
+        fs.unlink(banner.SrcBanner.replace('http://127.0.0.1:5000', '.'), (err => {
+            if(err) console.log(err)
+        }))
+
         await Banner.destroy({
             where: {
                 id: req.params.id

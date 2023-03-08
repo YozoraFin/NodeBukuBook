@@ -1,4 +1,5 @@
 import Sampul from "../model/SampulModel.js"
+import fs from "fs"
 
 export const getSampul = async(req, res) => {
     try {
@@ -19,6 +20,16 @@ export const getSampul = async(req, res) => {
 
 export const deleteSampul = async(req, res) => {
     try {
+        const sampul = await Sampul.findOne({
+            where: {
+                ID: req.param.id
+            }
+        })
+
+        fs.unlink(sampul.SrcGambar.replace('http://127.0.0.1:5000', '.'), (err => {
+            if(err) console.log(err)
+        }))
+
         await Sampul.destroy({
             where: {
                 ID: req.params.id

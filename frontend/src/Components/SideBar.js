@@ -47,6 +47,12 @@ export default function SideBar() {
                                 <p>Banner</p>
                             </Link>
                         </li>
+                        <li className="nav-item">
+                            <Link to={'/admin/order'} className={location.pathname.indexOf('/order') > -1 ? 'nav-link active' : 'nav-link'}>
+                                <i className="nav-icon fas fa-store"></i>
+                                <p>Order</p>
+                            </Link>
+                        </li>
                     </ul>
                 </nav>
             </div>

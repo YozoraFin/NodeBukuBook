@@ -12,6 +12,11 @@ import GenreRouter from './router/GenreController.js';
 import SampulRouter from './router/SampulRouter.js';
 import CustomerRouter from './router/CustomerRouter.js';
 import KomentarRouter from './router/KomentarRouter.js';
+import EmailRouter from './router/EmailRouter.js';
+import CartRouter from './router/CartRouter.js';
+import RajaOngkirRouter from './router/RajaOngkirRouter.js';
+import CheckoutRouter from './router/CheckoutRouter.js';
+import OrderRouter from './router/OrderRouter.js';
 
 const app = express()
 
@@ -40,5 +45,10 @@ app.use('/genre', GenreRouter)
 app.use('/sampul', SampulRouter)
 app.use('/customer', CustomerRouter)
 app.use('/komentar', KomentarRouter)
+app.use('/email', EmailRouter)
+app.use('/cart', CartRouter)
+app.use('/rajaongkir', RajaOngkirRouter)
+app.use('/checkout', CheckoutRouter)
+app.use('/order', OrderRouter)
 
 app.listen(5000, () => {console.log('lesgo')})

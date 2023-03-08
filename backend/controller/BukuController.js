@@ -3,6 +3,7 @@ import db from '../config/Database.js'
 import Buku from '../model/BukuModel.js'
 import Genre from '../model/GenreModel.js'
 import Sampul from '../model/SampulModel.js'
+import fs from 'fs'
 
 export const getBuku = async(req, res) => {
     try {
@@ -273,11 +274,24 @@ export const updateBuku = async(req, res) => {
 
 export const deleteBuku = async(req, res) => {
     try {  
+        const sampul = await Sampul.findAll({
+            where: {
+                BukuID: req.params.id
+            }
+        })
+
+        sampul.forEach(sam => {
+            fs.unlink(sam.SrcGambar.replace('http://127.0.0.1:5000', '.'), (err => {
+                if(err) console.log(err)
+            }))
+        });
+
         await Buku.destroy({
             where: {
                 ID: req.params.id
             }
         })
+        
         await Sampul.destroy({
             where: {
                 BukuID: req.params.id

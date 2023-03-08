@@ -1,49 +1,75 @@
+import { Sequelize } from "sequelize"
 import Article from "../model/ArticleModel.js"
 import Customer from "../model/CustomerModel.js"
 import Kategori from "../model/KategoriModel.js"
 import Komentar from "../model/KomentarModel.js"
+import fs from "fs"
 
 export const getArticle = async(req, res) => {
     try {
         let articledata
         if(!req.query.kategori && req.query.penulis) {
             articledata = await Article.findAll({
-                attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar', 'Tanggal'],
+                attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar', 'Tanggal', [Sequelize.fn('Count', Sequelize.col('Komentar.Komentar')), 'JumlahKomen']],
                 where: {
                     Penulis: req.query.penulis
                 },
-                include: [{
-                    model: Kategori,
-                    as: 'Kategori'
-                }],
+                include: [
+                    {
+                        model: Kategori,
+                        as: 'Kategori'
+                    },
+                    {
+                        model: Komentar,
+                        as: 'Komentar',
+                        attributes: []
+                    }
+                ],
                 order: [
                     ['id', 'DESC']
-                ]
+                ],
+                group: ['bukubook_content_articlepage.Judul']
             })
         } else if(!req.query.penulis && req.query.kategori) {
             articledata = await Article.findAll({
-                attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar', 'Tanggal'],
-                include: [{
-                    model: Kategori,
-                    where: {
-                        Kategori: req.query.kategori
+                attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar', 'Tanggal', [Sequelize.fn('Count', Sequelize.col('Komentar.Komentar')), 'JumlahKomen']],
+                include: [
+                    {
+                        model: Kategori,
+                        where: {
+                            Kategori: req.query.kategori
+                        },
+                        as: 'Kategori'
                     },
-                    as: 'Kategori'
-                }],
+                    {
+                        model: Komentar,
+                        as: 'Komentar',
+                        attributes: []
+                    }
+                ],
                 order: [
                     ['id', 'DESC']
-                ]
+                ],
+                group: ['bukubook_content_articlepage.Judul']
             })
         } else {
             articledata = await Article.findAll({
-                attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar', 'Tanggal'],
-                include: [{
-                    model: Kategori,
-                    as: 'Kategori'
-                }],
+                attributes: ['id', 'Judul', 'Isi', 'Penulis', 'Teaser', 'KategoriID', 'SrcGambar', 'NamaGambar', 'Tanggal', [Sequelize.fn('Count', Sequelize.col('Komentar.Komentar')), 'JumlahKomen']],
+                include: [
+                    {
+                        model: Kategori,
+                        as: 'Kategori'
+                    },
+                    {
+                        model: Komentar,
+                        as: 'Komentar',
+                        attributes: []
+                    }
+                ],
                 order: [
                     ['id', 'DESC']
-                ]
+                ],
+                group: ['bukubook_content_articlepage.Judul']
             })
         }
         res.status(200).json({
@@ -196,6 +222,19 @@ export const updateArticle = async(req, res) => {
                 message: 'Ok'
             })
         } else {
+            const artikel = await Article.findOne({
+                where: {
+                    id: req.params.id
+                }
+            })
+
+            fs.unlink(artikel.SrcGambar.replace('http://127.0.0.1:5000', '.'), (err => {
+                if(err) console.log(err)
+                else {
+                    console.log('berhasil dihapus')
+                }
+            }))
+
             var newVal = {
                 Judul: req.body.Judul,
                 Isi: req.body.Isi,
@@ -222,6 +261,16 @@ export const updateArticle = async(req, res) => {
 
 export const deleteArticle = async(req, res) => {
     try {
+        const artikel = await Article.findOne({
+            where: {
+                id: req.params.id
+            }
+        })
+
+        fs.unlink(artikel.SrcGambar.replace('http://127.0.0.1:5000', '.'), (err => {
+            if(err) console.log(err)
+        }))
+
         await Article.destroy({
             where: {
                 id: req.params.id

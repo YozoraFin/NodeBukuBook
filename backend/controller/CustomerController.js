@@ -2,6 +2,7 @@ import Customer from "../model/CustomerModel.js"
 import md5 from 'md5'
 import AksesToken from "../model/AksesTokenModel.js"
 import Cart from "../model/CartModel.js"
+import fs from "fs"
 
 export const register = async(req, res) => {
     try {
@@ -189,6 +190,11 @@ export const updateCustomer = async(req, res) => {
                     }
                 ]
             })
+
+            fs.unlink(id.Profil.replace('http://127.0.0.1:5000', '.'), (err => {
+                if(err) console.log(err)
+            }))
+
             const object = {
                 NamaLengkap: req.body.NamaLengkap,
                 NamaPanggilan: req.body.NamaPanggilan,

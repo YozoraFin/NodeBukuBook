@@ -113,6 +113,7 @@ export default function CreateBuku() {
             formData.append('Genreid', selectedGenre)
             formData.append('Sinopsis', convert)
             formData.append('genrehid', selectedGenre)
+            formData.append('Rekomended', rekomended)
             if(arrFile.length > 0) {
                 for (let index = 0; index < arrFile.length; index++) {
                     const element = arrFile[index];

@@ -1,17 +1,20 @@
 import { Sequelize } from "sequelize";
 import db from "../config/Database.js";
-import Customer from "./CustomerModel.js";
+import Buku from "./BukuModel.js";
 
 const {DataTypes} = Sequelize
 
-const Cart = db.define('bukubook_content_cart', {
-    qty: {
+const OrderDetail = db.define('bukubook_content_orderdetail', {
+    Quantity: {
         type: DataTypes.INTEGER
     },
-    CustomerID: {
+    Subtotal: {
         type: DataTypes.INTEGER
     },
     BukuID: {
+        type: DataTypes.INTEGER
+    },
+    OrderID: {
         type: DataTypes.INTEGER
     }
 }, {
@@ -19,4 +22,4 @@ const Cart = db.define('bukubook_content_cart', {
     timestamps: false
 })
 
-export default Cart
+export default OrderDetail

@@ -16,6 +16,8 @@ import EditKategori from './Components/EditKategori.js';
 import EditSocial from './Components/EditSocial';
 import LoginAdmin from './Components/LoginAdmin';
 import Main from './Components/Main';
+import Order from './Components/Order.js';
+import OrderDetail from './Components/OrderDetail.js';
 import Portal from './Components/Portal';
 import SiteConfig from './Components/SiteConfig';
 
@@ -41,6 +43,8 @@ function App() {
                     <Route exact path='genre/:id' element={<EditGenre/>} />
                     <Route exact path='social/create' element={<CreateSocial/>} />
                     <Route exact path='social/:id' element={<EditSocial/>} />
+                    <Route exact path='order' element={<Order/>}/>
+                    <Route exact path='order/:id' element={<OrderDetail/>} />
                 </Route>
                 <Route exact path='login' element={<LoginAdmin/>} />
             </Routes>

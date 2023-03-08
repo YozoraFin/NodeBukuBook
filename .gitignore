@@ -2,6 +2,7 @@
 /frontend/public/build
 /frontend/public/dist
 /frontend/public/plugins
+/frontend/.env
 /backend/.env
 /backend/node_modules
 /backend/foto

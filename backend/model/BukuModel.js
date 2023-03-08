@@ -1,6 +1,8 @@
 import { Sequelize } from "sequelize";
 import db from "../config/Database.js";
+import Cart from "./CartModel.js";
 import Genre from "./GenreModel.js";
+import OrderDetail from "./OrderDetailModel.js";
 
 const {DataTypes} = Sequelize
 const Buku = db.define('buku', {
@@ -37,6 +39,20 @@ Genre.hasMany(Buku, {
 Buku.belongsTo(Genre, {
     foreignKey: 'genrehid',
     as: 'Genre'
+})
+Buku.hasMany(Cart, {
+    foreignKey: 'BukuID',
+    as: 'Cart'
+})
+Cart.belongsTo(Buku, {
+    as: 'Buku'
+})
+Buku.hasMany(OrderDetail, {
+    as: 'OrderDetail',
+    foreignKey: 'BukuID'
+})
+OrderDetail.belongsTo(Buku, {
+    as: 'Buku'
 })
 
 export default Buku
