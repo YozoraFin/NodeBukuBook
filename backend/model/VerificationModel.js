@@ -14,3 +14,5 @@ const Verification = db.define('verification', {
     freezeTableName: true,
     timestamps: false
 })
+
+export default Verification
