@@ -6,3 +6,4 @@
 /backend/.env
 /backend/node_modules
 /backend/foto
+/backend/.wwebjs_auth

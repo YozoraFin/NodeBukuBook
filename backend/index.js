@@ -17,6 +17,7 @@ import CartRouter from './router/CartRouter.js';
 import RajaOngkirRouter from './router/RajaOngkirRouter.js';
 import CheckoutRouter from './router/CheckoutRouter.js';
 import OrderRouter from './router/OrderRouter.js';
+import client from './client/client.js';
 
 const app = express()
 
@@ -50,5 +51,7 @@ app.use('/cart', CartRouter)
 app.use('/rajaongkir', RajaOngkirRouter)
 app.use('/checkout', CheckoutRouter)
 app.use('/order', OrderRouter)
+
+client.initialize();
 
 app.listen(5000, () => {console.log('lesgo')})
