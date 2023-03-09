@@ -33,7 +33,7 @@ export default function CreateKategori() {
     }
 
     return (
-        <section className="content content-wrapper">
+        <section className="content-wrapper">
             <div className="container-fluid">
                 <div className="row pt-3 px-3">
                     <div className="col-md-4">
@@ -45,7 +45,7 @@ export default function CreateKategori() {
                                 <div className="card-body">
                                     <div className="form-group">
                                         <label htmlFor="Kategori">Kategori</label>
-                                        <input required value={kategori} onChange={(e) => {setKategori(e.target.value)}} type="text" className="form-control" id="Kategori" />
+                                        <input placeholder='Kategori' required value={kategori} onChange={(e) => {setKategori(e.target.value)}} type="text" className="form-control" id="Kategori" />
                                     </div>
                                 </div>
                                 <div className="card-footer">

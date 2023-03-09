@@ -98,7 +98,7 @@ export default function CreateArtikel() {
                     })
 
     return (
-        <section className="content content-wrapper">
+        <section className="content-wrapper">
             <div className="container-fluid">
                 <div className="row pt-3 px-3">
                     <div className="col-12">
@@ -112,11 +112,11 @@ export default function CreateArtikel() {
                                         <div className="col-4">
                                             <div className="form-group">
                                                 <label htmlFor="judulartikel">Judul</label>
-                                                <input required type="text" id="judulartikel" className="form-control" name='Judul' />
+                                                <input placeholder='Judul' required type="text" id="judulartikel" className="form-control" name='Judul' />
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="penulisartikel">Penulis</label>
-                                                <input required type="text" id="penulisartikel" className="form-control" name='Penulis' />
+                                                <input placeholder='Penulis' required type="text" id="penulisartikel" className="form-control" name='Penulis' />
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="judulartikel">Cover</label>
@@ -130,7 +130,7 @@ export default function CreateArtikel() {
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="Teaser">Teaser</label>
-                                                <textarea required className='form-control' name="Teaser" id="Teaser" cols="30" rows="10"></textarea>
+                                                <textarea placeholder='Teaser' required className='form-control' name="Teaser" id="Teaser" cols="30" rows="10"></textarea>
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="judulartikel">Kategori</label>

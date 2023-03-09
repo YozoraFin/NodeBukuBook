@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { BsMegaphoneFill } from "react-icons/bs";
 
 export default function SideBar() {
     const location = useLocation()
@@ -51,6 +52,12 @@ export default function SideBar() {
                             <Link to={'/admin/order'} className={location.pathname.indexOf('/order') > -1 ? 'nav-link active' : 'nav-link'}>
                                 <i className="nav-icon fas fa-store"></i>
                                 <p>Order</p>
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link to={'/admin/broadcast'} className={location.pathname.indexOf('/broadcast') > -1 ? 'nav-link active' : 'nav-link'}>
+                                <BsMegaphoneFill className='nav-icon'/>
+                                <p>Broadcast</p>
                             </Link>
                         </li>
                     </ul>

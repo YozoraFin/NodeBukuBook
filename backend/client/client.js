@@ -12,7 +12,6 @@ client.on('qr', (qr) => {
 
 client.on('ready', () => {
     console.log('Client is ready!');
-    client.sendMessage('6287888502866@c.us', `botnya baru nyala euy`)
 })
 
 export default client

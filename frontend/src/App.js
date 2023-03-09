@@ -1,15 +1,18 @@
 import { Route, Routes } from 'react-router-dom';
 import Artikel from './Components/Artikel';
 import Banner from './Components/Banner';
+import Broadcast from './Components/Broadcast.js';
 import Buku from './Components/Buku';
 import CreateArtikel from './Components/CreateArtikel.js';
 import CreateBanner from './Components/CreateBanner.js';
+import CreateBroadcast from './Components/CreateBroadcast.js';
 import CreateBuku from './Components/CreateBuku.js';
 import CreateGenre from './Components/CreateGenre.js';
 import CreateKategori from './Components/CreateKategori.js';
 import CreateSocial from './Components/CreateSocial';
 import EditArtikel from './Components/EditArtikel.js';
 import EditBanner from './Components/EditBanner.js';
+import EditBroadcast from './Components/EditBroadcast.js';
 import EditBuku from './Components/EditBuku.js';
 import EditGenre from './Components/EditGenre.js';
 import EditKategori from './Components/EditKategori.js';
@@ -45,6 +48,9 @@ function App() {
                     <Route exact path='social/:id' element={<EditSocial/>} />
                     <Route exact path='order' element={<Order/>}/>
                     <Route exact path='order/:id' element={<OrderDetail/>} />
+                    <Route exact path='broadcast' element={<Broadcast/>} />
+                    <Route exact path='broadcast/create' element={<CreateBroadcast/>} /> 
+                    <Route exact path='broadcast/:id' element={<EditBroadcast/>} />
                 </Route>
                 <Route exact path='login' element={<LoginAdmin/>} />
             </Routes>

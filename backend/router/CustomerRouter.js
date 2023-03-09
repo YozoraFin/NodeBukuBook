@@ -1,6 +1,6 @@
 import express from 'express'
 import multer from 'multer'
-import { getCustomer, login, register, getCustomerNotif, updateCustomer } from '../controller/CustomerController.js'
+import { getCustomer, login, register, getCustomerNotif, updateCustomer, getOTP, verifikasiOTP } from '../controller/CustomerController.js'
 import path from 'path'
 
 const CustomerRouter = express.Router()
@@ -18,6 +18,8 @@ var upload = multer({
 })
 
 CustomerRouter.post('/register', register)
+CustomerRouter.post('/getotp', getOTP)
+CustomerRouter.post('/verification', verifikasiOTP)
 CustomerRouter.post('/login', login)
 CustomerRouter.post('/get', getCustomer)
 CustomerRouter.post('/getnotif', getCustomerNotif)

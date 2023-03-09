@@ -29,7 +29,7 @@ export default function CreateSocial() {
     }
 
     return (
-        <section className="content content-wrapper">
+        <section className="content-wrapper">
             <div className="container-fluid">
                 <div className="row pt-3 pl-3">
                     <div className="col-md-4">
@@ -41,15 +41,15 @@ export default function CreateSocial() {
                                 <div className="card-body">
                                     <div className="form-group">
                                         <label htmlFor="Nama">Nama</label>
-                                        <input required onChange={(e) => {setNamaSocial(e.target.value)}} value={namaSocial} type="text" className='form-control' id='Nama'/>
+                                        <input placeholder='Nama' required onChange={(e) => {setNamaSocial(e.target.value)}} value={namaSocial} type="text" className='form-control' id='Nama'/>
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="Icon">Icon (<a className='text-info' target={'__blank'} href="https://fontawesome.com">fontawesome.com</a>)</label>
-                                        <input required onChange={(e) => {setIconSocial(e.target.value)}} value={iconSocial} type="text" className="form-control" id='Icon'/>
+                                        <input placeholder='Icon' required onChange={(e) => {setIconSocial(e.target.value)}} value={iconSocial} type="text" className="form-control" id='Icon'/>
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="Link">Link</label>
-                                        <input required onChange={(e) => {setLinkSocial(e.target.value)}} value={linkSocial} type="text" className="form-control" id='Link' />
+                                        <input placeholder='Link' required onChange={(e) => {setLinkSocial(e.target.value)}} value={linkSocial} type="text" className="form-control" id='Link' />
                                     </div>
                                 </div>
                                 <div className="card-footer">

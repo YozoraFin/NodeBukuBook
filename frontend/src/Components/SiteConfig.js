@@ -130,7 +130,7 @@ export default function SiteConfig() {
     }
 
     return (
-        <section className="content content-wrapper">
+        <section className="content-wrapper">
             <div className="container-fluid">
                 <div className="row pt-3 px-3">
                     <div className="col-12">

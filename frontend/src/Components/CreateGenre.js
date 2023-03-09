@@ -33,7 +33,7 @@ export default function CreateGenre() {
     }
 
     return (
-        <section className="content content-wrapper">
+        <section className="content-wrapper">
             <div className="container-fluid">
                 <div className="row pt-3 px-3">
                     <div className="col-4">
@@ -45,7 +45,7 @@ export default function CreateGenre() {
                                 <div className="card-body">
                                     <div className="form-group">
                                         <label htmlFor="genreinput">Genre</label>
-                                        <input value={genre} onChange={(e) => {setGenre(e.target.value)}} required type="text" className="form-control" id="genreinput" />
+                                        <input placeholder='Genre' value={genre} onChange={(e) => {setGenre(e.target.value)}} required type="text" className="form-control" id="genreinput" />
                                     </div>
                                 </div>
                                 <div className="card-footer">

@@ -9,6 +9,9 @@ const Verification = db.define('verification', {
     },
     Code: {
         type: DataTypes.INTEGER
+    },
+    Kadaluarsa: {
+        type: DataTypes.BIGINT
     }
 }, {
     freezeTableName: true,

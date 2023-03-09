@@ -40,7 +40,7 @@ export default function CreateBanner() {
     }
 
     return (
-        <section className="content content-wrapper">
+        <section className="content-wrapper">
             <div className="container-fluid">
                 <div className="row pt-3 px-3">
                     <div className="col-md-6">
@@ -70,7 +70,7 @@ export default function CreateBanner() {
                                     {fileUrl === '' ? '' : <img src={fileUrl} alt="" width={150} height={200} />}
                                     <div className="form-group mt-3">
                                         <label htmlFor="Deskripsi">Deskripsi</label>
-                                        <textarea required onChange={(e) => {setDeskripsi(e.target.value)}} value={deskripsi} name="Deskripsi" id="Deskripsi" cols="30" rows="10" className="form-control"></textarea>
+                                        <textarea placeholder='Deskripsi' required onChange={(e) => {setDeskripsi(e.target.value)}} value={deskripsi} name="Deskripsi" id="Deskripsi" cols="30" rows="10" className="form-control"></textarea>
                                     </div>
                                 </div>
                                 <div className="card-footer">

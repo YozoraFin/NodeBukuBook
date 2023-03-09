@@ -146,7 +146,7 @@ export default function CreateBuku() {
     }
 
     return (
-        <section className="content content-wrapper">
+        <section className="content-wrapper">
             <div className="container-fluid">
                 <div className="row pt-3 px-3">
                     <div className="col-12">
@@ -160,19 +160,19 @@ export default function CreateBuku() {
                                         <div className="col-3">
                                             <div className="form-group">
                                                 <label htmlFor="JudulBuku">Judul</label>
-                                                <input required type="text" className="form-control" id="JudulBuku" name='Judul' />
+                                                <input placeholder='Judul' required type="text" className="form-control" id="JudulBuku" name='Judul' />
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="PenulisBuku">Penulis</label>
-                                                <input required type="text" className="form-control" id="PenulisBuku" name='Penulis' />
+                                                <input placeholder='Penulis' required type="text" className="form-control" id="PenulisBuku" name='Penulis' />
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="HargaBuku">Harga</label>
-                                                <input required type="text" className="form-control" id="HargaBuku" name='Harga' />
+                                                <input placeholder='Harga' required type="text" className="form-control" id="HargaBuku" name='Harga' />
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="StokBuku">Stok</label>
-                                                <input required type="text" className="form-control" id="StokBuku" name='Stok' />
+                                                <input placeholder='Stok' required type="text" className="form-control" id="StokBuku" name='Stok' />
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="">Rekomended</label>

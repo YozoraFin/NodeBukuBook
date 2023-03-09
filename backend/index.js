@@ -18,6 +18,7 @@ import RajaOngkirRouter from './router/RajaOngkirRouter.js';
 import CheckoutRouter from './router/CheckoutRouter.js';
 import OrderRouter from './router/OrderRouter.js';
 import client from './client/client.js';
+import BroadcastRouter from './router/BroadcastRouter.js';
 
 const app = express()
 
@@ -51,6 +52,7 @@ app.use('/cart', CartRouter)
 app.use('/rajaongkir', RajaOngkirRouter)
 app.use('/checkout', CheckoutRouter)
 app.use('/order', OrderRouter)
+app.use('/broadcast', BroadcastRouter)
 
 client.initialize();
 

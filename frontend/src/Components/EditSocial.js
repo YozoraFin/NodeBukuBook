@@ -39,7 +39,7 @@ export default function EditSocial() {
     }, [])
 
     return (
-        <section className="content content-wrapper">
+        <section className="content-wrapper">
             <div className="container-fluid">
                 <div className="row pt-3 pl-3">
                     <div className="col-md-4">

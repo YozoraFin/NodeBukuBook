@@ -148,7 +148,7 @@ export const checkout = async(req, res) => {
                             </td>
                         </tr>
                     `
-                    messagebuku += `${dat.qty}x ${bukudata.Judul}\n@Rp ${separator(dat.subtotal)}\n\n`
+                    messagebuku += `${dat.qty}x *${bukudata.Judul}*\n@Rp ${separator(dat.subtotal)}\n\n`
                 }))
 
                 const transporter = nodemailer.createTransport({
@@ -185,7 +185,7 @@ export const checkout = async(req, res) => {
                     }
                 })
 
-                const wmessage = `Terima kasih telah menggunakan layanan BukuBook. Saat ini pesananmu sedang di proses, berikut adalah detail pesananmu\n\nInformasi Order:\nInvoice: ${invoice}\nTanggal: ${tanggal}\nTotal: Rp ${separator(body.Total)}\n\nInformasi Pembeli:\nNama: ${body.Nama}\nTelp: ${body.NoTelp}\nEmail: ${body.Email}\n\nAlamat Tujuan:\nKota: ${body.Kota}\nJalan: ${body.Alamat}\nKodepos: ${body.Kodepos}\n\nBuku:\n${messagebuku}Subtotal: Rp ${separator(subtotal)}\nOngkir: Rp ${separator(body.Ongkir)}\nTotal: Rp ${separator(body.Total)}\n\nCatatan: _${body.Catatan}_`
+                const wmessage = `Terima kasih telah menggunakan layanan BukuBook. Saat ini pesananmu sedang di proses, berikut adalah detail pesananmu\n\nInformasi Order:\nInvoice: ${invoice}\nTanggal: ${tanggal}\nTotal: *Rp ${separator(body.Total)}*\n\nInformasi Pembeli:\nNama: *${body.Nama}*\nTelp: ${body.NoTelp}\nEmail: ${body.Email}\n\nAlamat Tujuan:\nKota: ${body.Kota}\nJalan: ${body.Alamat}\nKodepos: ${body.Kodepos}\n\nBuku:\n${messagebuku}Subtotal: Rp ${separator(subtotal)}\nOngkir: Rp ${separator(body.Ongkir)}\nTotal: Rp ${separator(body.Total)}\n\nCatatan: _${body.Catatan}_`
                 client.sendMessage('6287888502866@c.us', wmessage)
 
             } else {

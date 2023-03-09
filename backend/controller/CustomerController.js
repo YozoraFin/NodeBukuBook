@@ -3,6 +3,8 @@ import md5 from 'md5'
 import AksesToken from "../model/AksesTokenModel.js"
 import Cart from "../model/CartModel.js"
 import fs from "fs"
+import client from "../client/client.js"
+import Verification from "../model/VerificationModel.js"
 
 export const register = async(req, res) => {
     try {
@@ -12,10 +14,21 @@ export const register = async(req, res) => {
             }
         })
 
+        const checktelp = await Customer.findAll({
+            where: {
+                NoTelp: req.body.NoTelp
+            }
+        })
+
         if(check.length > 0) {
             res.json({
                 status: 400,
                 message: 'Email ini sudah digunakan'
+            })
+        } else if(checktelp.length > 0) {
+            res.json({
+                status: 400,
+                message: 'Nomor Telephone ini sudah digunakan'
             })
         } else {
             const object =  {
@@ -38,11 +51,79 @@ export const register = async(req, res) => {
     }
 }
 
+export const getOTP = async(req, res) => {
+    try {
+        const check = await Customer.findAll({
+            where: {
+                NoTelp: req.body.NoTelp
+            }
+        })
+
+        if(check.length > 0) {
+            res.json({
+                status: 400,
+                message: 'Nomor ini sudah digunakan'
+            })
+        } else {
+            const code = Math.floor(1000 + (9999 - 1000)*Math.random())
+            var object = {
+                Code: code,
+                NoTelp: req.body.NoTelp,
+                Kadaluars: Date.now()+1000*60*10
+            }
+
+            await Verification.create(object)
+            const message = `Gunakan kode OTP *${code}* untuk verifikasi nomor anda pada website bukubook\n\n**Perhatian!* jika anda merasa tidak pernah memasukkan nomor anda ke dalam website bukubook tolong abaikan pesan ini`
+            client.sendMessage(`62${req.body.NoTelp}@c.us`, message)
+            res.json({
+                status: 200,
+                message: 'Terkirim'
+            })
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const verifikasiOTP = async(req, res) => {
+    try {
+        const otp = await Verification.findOne({
+            where: {
+                NoTelp: req.body.NoTelp,
+                Code: req.body.OTP
+            },
+            order: [
+                ['id', 'DESC']
+            ]
+        })
+        if(!otp) {
+            res.json({
+                status: 404,
+                message: 'Kode OTP yang dimasukkan salah!'
+            })
+        } else {
+            if(otp.Kadaluarsa > Date.now()) {
+                res.json({
+                    status: 403,
+                    message: 'Kode otp telah kadaluarsa'
+                })
+            } else {
+                res.json({
+                    status: 200,
+                    message: 'Berhasil verifikasi'
+                })
+            }
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 export const login = async(req, res) => {
     try {
         const customer = await Customer.findOne({
             where: {
-                Email: req.body.Email
+                NoTelp: req.body.NoTelp
             }
         })
         if(customer) {
