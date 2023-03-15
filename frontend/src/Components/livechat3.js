@@ -1,10 +1,10 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import SkeletonChat from './SkeletonChat.js'
 
 export default function Livechat({ socket }) {
     const [message, setMessage] = useState([])
-    const [newMessage, setNewMessage] = useState(true)
+    const [newMessage, setNewMessage] = useState({})
     const [chatScroll, setchatScroll] = useState(0)
     const [moreChat, setMoreChat] = useState(true)
     const [loadingChatNext, setLoadingChatNext] = useState(false)
@@ -20,11 +20,6 @@ export default function Livechat({ socket }) {
     const [offsetChat, setOffsetChat] = useState(0)
     const [offsetMessage, setOffsetMessage] = useState(0)
     const [moreMessage, setMoreMessage] = useState(true)
-    const curIdChat = useRef({
-        id: '',
-        index: 0
-    })
-    const curChat = useRef({})
 
     const getMessage = () => {
         socket.emit('getMessage', {
@@ -86,7 +81,6 @@ export default function Livechat({ socket }) {
         socket.on('sendDetail', (data) => {
             setOpen(true)
             setChat(data.data)
-            curChat.current = data.data
             debounce(() => {
                 var elementz = document.getElementById('messages50')
                 elementz?.scrollIntoView()
@@ -114,15 +108,26 @@ export default function Livechat({ socket }) {
 
     const handleSubmitMessage = (e) => {
         e.preventDefault()
-        socket.emit('sendingMessage', {
+        socket.emit('sendMessage', {
             id: idChat.id,
-            message: document.getElementById('message')?.value
+            message: document.getElementById('message').value
         })
+        var messagedata = message
+        messagedata[idChat.index].pesan.message = document.getElementById('message').value
+        messagedata[idChat.index].pesan.type = 'chat'
+        if(idChat.index > 1) {
+            messagedata.splice(2, 0, messagedata[idChat.index])
+            messagedata.splice(idChat.index+1, 1)
+            setIdChat({
+                id: idChat.id,
+                index: 2
+            })
+        }
+        setMessage(messagedata)
         document.getElementById('message').value = ''
     }
-    
+
     const getNewMessage = (id, data) => {
-        var dataVes = data
         var dmessage = message
         const isExist = (k) => {
             if(k.id._serialized === id) {
@@ -131,37 +136,26 @@ export default function Livechat({ socket }) {
             return false
         }
 
-        if(id === curIdChat.current.id) {
-            var datachat = curChat.current
+        if(id === idChat.id) {
+            var datachat = chat
             var element = document.getElementById('chat-history')
-            if(datachat.pesan[datachat.pesan.length-1] !== data.pesan) {
-                datachat.pesan?.push(data.pesan)
-            }
+            datachat.pesan?.push(data.pesan)
             if(Object.values(datachat).length !== 0) {
                 setChat(datachat)
-                curChat.current = datachat
-                if(Math.abs(element?.scrollHeight - element?.clientHeight - element?.scrollTop) < 1000) {
-                    var elementz = document.getElementById(`messages${datachat.pesan.length}`)
-                    elementz?.scrollIntoView()
+                if(Math.abs(element?.scrollHeight - element?.clientHeight - element?.scrollTop) < 1) {
+                    element?.scrollTo(0, 20000)
                 }
-            }
-            setLoadingMessage(false)
-        } else {
-            if(!dataVes.pesan.fromMe) {
-                dataVes.unread = data.unread + 1
-            } else {
-                dataVes.unread = 0
             }
         }
 
         var index = dmessage.findIndex(isExist)
         if(index < 2 && index > -1) {
-            dmessage.splice(index, 0, dataVes)
+            dmessage.splice(index, 0, data)
             dmessage.splice(index+1, 1)
         } else if(index === -1) {
-            dmessage.splice(2, 0, dataVes)
+            dmessage.splice(2, 0, data)
         } else if(index > 1) {
-            dmessage.splice(2, 0, dataVes)
+            dmessage.splice(2, 0, data)
             dmessage.splice(index+1, 1)
         }
         setMessage(dmessage)
@@ -174,16 +168,15 @@ export default function Livechat({ socket }) {
     }, [message])
 
     useEffect(() => {
-        if(message?.length > 0) {
-            socket.on('sendNewMessage', (data) => {
-                if(message.length > 0) {
-                    setNewMessage(data.data)
-                    getNewMessage(data.data.id['_serialized'], data.data)
-                    setLoadingMessage(true)
-                }
-            })
-        }
-    }, [message])
+        var chatVes = chat?.pesan?.length
+        socket.on('sendNewMessage', (data) => {
+            if(message.length > 0 && chatVes !== chat?.pesan?.length) {
+                setNewMessage(data.data)
+                getNewMessage(data.data.id['_serialized'], data.data)
+            }
+            chatVes = chat?.pesan?.length
+        })
+    }, [message, idChat, chat])
 
     useEffect(() => {
         var dataChat = message
@@ -215,7 +208,6 @@ export default function Livechat({ socket }) {
                             datamessage?.pesan?.unshift(element)
                         }
                         setChat(datamessage)
-                        curChat.current = datamessage
                     }
                 }
                 var elementz = document.getElementById('messages50')
@@ -273,7 +265,7 @@ export default function Livechat({ socket }) {
                     :
                     message?.map((msg, index) => {
                         return(
-                            <li onClick={() => {setIdChat({id: msg?.id['_serialized'], index: index}); document.getElementById('messages50')?.scrollIntoView(); handleRemoveNotif(index); curIdChat.current.id = msg?.id['_serialized']; curIdChat.current.index = index}} className="clearfix" key={`chat${index}`}>
+                            <li onClick={() => {setIdChat({id: msg?.id['_serialized'], index: index}); document.getElementById('messages50')?.scrollIntoView(); handleRemoveNotif(index)}} className="clearfix" key={`chat${index}`}>
                                 <img src={msg?.profile ? msg?.profile : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'} alt="avatar"/>
                                 <div className="about">
                                     <div className="name pb-2">{msg?.nama?.length > 15 ? msg?.nama.slice(0, 15)+'...' : msg?.nama}</div>

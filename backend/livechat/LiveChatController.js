@@ -3,18 +3,36 @@ var totalMessage = 0
 
 export const getNewMessage = async(socket, msg) => {
     try {
-        var contact = await msg.getContact()
-        var profile = await contact.getProfilePicUrl()
         var chat = await msg.getChat()
+        var chatFContact = await chat.getContact()
+        var profile = await chatFContact.getProfilePicUrl()
         var id = chat.id
-        var message = await chat.fetchMessages({limit: 1})
+        var message = msg
         var unread = chat.unreadCount
         var name = chat.name
+        var element = message
+        var time
+        const month = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Ags","Sep","Okt","Nov","Des"];
+        const d = new Date(element.timestamp*1000)
+        const hari = Date.now()/1000 - 60*60*24
+        var minute
+        if(d.getMinutes() < 10) {
+            minute = `0${d.getMinutes()}`
+        } else {
+            minute = `${d.getMinutes()}`
+        }
+        if(element.timestamp < hari) {
+            time = `${d.getDate()} ${month[d.getMonth()]}, ${d.getHours()}:${minute} `
+        } else {
+            time = `${d.getHours()}:${minute}`
+        }
         var body = {
-            message: message[0].body,
-            fromMe: message[0].fromMe,
-            time: message[0].timestamp,
-            type: message[0].type
+            message: message.body,
+            fromMe: message.fromMe,
+            time: time,
+            type: message.type,
+            body: message.body,
+            timestamp: message.timestamp
         }
         var datacontact = {
             nama: name,

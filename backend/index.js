@@ -45,10 +45,6 @@ io.on('connection', (socket) => {
     client.on('message_create', (msg) => {
         getNewMessage(socket, msg)
     })
-    
-    client.on('message', (msg) => {
-        getNewMessage(socket, msg)
-    })
 
     socket.on('disconnect', () => {
         console.log('bai')
@@ -74,7 +70,7 @@ io.on('connection', (socket) => {
         getUnreadNotif(socket)
     })
 
-    socket.on('sendMessage', (data) => {
+    socket.on('sendingMessage', (data) => {
         sendChat(data)
     }) 
 
