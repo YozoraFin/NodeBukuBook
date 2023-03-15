@@ -92,6 +92,10 @@ export const sendBroadcast = async(req, res) => {
             var message = `*${broadcast.Judul}*\n\n${broadcast.Konten}`
             client.sendMessage(`62${element.NoTelp}@c.us`, message)
         });
+        res.json({
+            status: 200,
+            message: 'Berhasil dikirim'
+        })
     } catch (error) {
         console.log(error)
     }

@@ -10,8 +10,9 @@ client.on('qr', (qr) => {
     qrcode.generate(qr, {small: true})
 })
 
-client.on('ready', () => {
+client.on('ready',async () => {
     console.log('Client is ready!');
+    await new Promise(resolve => setTimeout(resolve, 20000))
 })
 
 export default client

@@ -17,19 +17,22 @@ import EditBuku from './Components/EditBuku.js';
 import EditGenre from './Components/EditGenre.js';
 import EditKategori from './Components/EditKategori.js';
 import EditSocial from './Components/EditSocial';
+import Livechat from './Components/Livechat.js';
 import LoginAdmin from './Components/LoginAdmin';
 import Main from './Components/Main';
 import Order from './Components/Order.js';
 import OrderDetail from './Components/OrderDetail.js';
 import Portal from './Components/Portal';
 import SiteConfig from './Components/SiteConfig';
+import socketIO from 'socket.io-client';
+const socket = socketIO.connect('http://localhost:5000')
 
 function App() {
     return (
         <div className='wrapper'>
             <Routes>
                 <Route exact index element={<Portal/>} />
-                <Route exact path='/admin' element={<Main/>}>
+                <Route exact path='/admin' element={<Main socket={socket} />}>
                     <Route exact index element={<SiteConfig/>}/>
                     <Route exact path='banner' element={<Banner/>} />
                     <Route exact path='banner/create' element={<CreateBanner/>} />
@@ -51,6 +54,7 @@ function App() {
                     <Route exact path='broadcast' element={<Broadcast/>} />
                     <Route exact path='broadcast/create' element={<CreateBroadcast/>} /> 
                     <Route exact path='broadcast/:id' element={<EditBroadcast/>} />
+                    <Route exact path='livechat' element={<Livechat socket={socket}/>} />
                 </Route>
                 <Route exact path='login' element={<LoginAdmin/>} />
             </Routes>

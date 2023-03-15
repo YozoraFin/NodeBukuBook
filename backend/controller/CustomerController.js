@@ -301,3 +301,42 @@ export const updateCustomer = async(req, res) => {
         })
     }
 }
+
+export const tes = async(req, res) => {
+    try {
+        var offset = 20
+        var chats = await client.getChats()
+        var total = 0
+        var total = Math.ceil(chats.length / 20)
+        var slice = chats.slice(offset, offset + 20)
+        var contact
+        var message
+        var body
+        var profile
+        var m = []
+
+        for (let index = 0; index < 20; index++) {
+            const element = slice[index];
+
+            profile = await (await element?.getContact()).getProfilePicUrl()
+            message = await element?.fetchMessages({limit: 1})
+            body = {
+                message: message[0].body,
+                fromMe: message[0].fromMe,
+                time: message[0].timestamp
+            }
+            m.push({
+                nama: element.name,
+                profile: profile,
+                pesan: body,
+                unread: element.unreadCount
+            })
+        }
+
+        res.json({
+            data: m
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}

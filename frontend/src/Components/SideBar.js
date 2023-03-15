@@ -1,9 +1,21 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { BsMegaphoneFill } from "react-icons/bs";
 
-export default function SideBar() {
+export default function SideBar({socket}) {
     const location = useLocation()
+    const [notif, setNotif] = useState(0)
+    const [notifStatus, setNotifStatus] = useState(true)
+
+    useEffect(() => {
+        if(notifStatus) {
+            socket.emit('getUnreadNotif', {})
+            setNotifStatus(false)
+        }
+        socket.on('sendUnreadNotif', (data) => {
+            setNotif(data.notif)
+        })
+    }, [])
 
     return (
         <aside className="main-sidebar sidebar-dark-primary elevation-4 sidebar-wrapper">
@@ -58,6 +70,15 @@ export default function SideBar() {
                             <Link to={'/admin/broadcast'} className={location.pathname.indexOf('/broadcast') > -1 ? 'nav-link active' : 'nav-link'}>
                                 <BsMegaphoneFill className='nav-icon'/>
                                 <p>Broadcast</p>
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link to={'/admin/livechat'} className={location.pathname.indexOf('/livechat') > -1 ? 'nav-link active' : 'nav-link'}>
+                                <i className="fas fa-comments nav-icon"></i>
+                                <p>
+                                    Live Chat
+                                    {notif > 0 ? <span className="badge badge-danger right">{notif}</span> : ''}
+                                </p>
                             </Link>
                         </li>
                     </ul>

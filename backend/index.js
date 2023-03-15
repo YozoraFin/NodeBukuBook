@@ -19,8 +19,18 @@ import CheckoutRouter from './router/CheckoutRouter.js';
 import OrderRouter from './router/OrderRouter.js';
 import client from './client/client.js';
 import BroadcastRouter from './router/BroadcastRouter.js';
+import { Server } from 'socket.io';
+import http  from 'http'
+import { getChat, getDetailChat, getNewMessage, getNextChat, getNextDetail, getUnreadNotif, sendChat } from './livechat/LiveChatController.js';
 
 const app = express()
+app.use(cors())
+const hattp = http.Server(app)
+const io = new Server(hattp, {
+    cors: {
+        origin: 'http://localhost:3000'
+    }
+})
 
 try {
     await db.authenticate();
@@ -29,7 +39,47 @@ try {
     console.log(error)
 }
 
-app.use(cors())
+io.on('connection', (socket) => {
+    console.log('halo')
+
+    client.on('message_create', (msg) => {
+        getNewMessage(socket, msg)
+    })
+    
+    client.on('message', (msg) => {
+        getNewMessage(socket, msg)
+    })
+
+    socket.on('disconnect', () => {
+        console.log('bai')
+    })
+
+    socket.on('getMessage', () => {
+        getChat(socket)
+    })
+
+    socket.on('getNextMessage', async(data) => {
+        getNextChat(socket, data)
+    })
+
+    socket.on('getDetail', (data) => {
+        getDetailChat(socket, data)
+    })
+
+    socket.on('getNextDetail', (data) => {
+        getNextDetail(socket, data)
+    })
+
+    socket.on('getUnreadNotif', () => {
+        getUnreadNotif(socket)
+    })
+
+    socket.on('sendMessage', (data) => {
+        sendChat(data)
+    }) 
+
+})
+
 app.use(express.json());
 app.use('/foto', express.static('foto'));
 app.use(bodyParser.json())
@@ -56,4 +106,4 @@ app.use('/broadcast', BroadcastRouter)
 
 client.initialize();
 
-app.listen(5000, () => {console.log('lesgo')})
+hattp.listen(5000, () => {console.log('lesgo')})

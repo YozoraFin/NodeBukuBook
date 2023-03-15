@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from 'react-router-dom'
 import Header from './Header'
 import SideBar from './SideBar'
 
-export default function Main() {
+export default function Main({socket}) {
     const navigate = useNavigate()
     const d = new Date()
 
@@ -16,7 +16,7 @@ export default function Main() {
     return (
         <Fragment>
             <Header/>
-            <SideBar/>
+            <SideBar socket={socket} />
             <Outlet/>
         </Fragment>
     )

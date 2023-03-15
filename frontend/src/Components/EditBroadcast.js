@@ -7,11 +7,10 @@ import withReactContent from 'sweetalert2-react-content'
 export default function EditBroadcast() {
     const [judul, setJudul] = useState('')
     const [deskripsi, setDeskripsi] = useState('')
-    const navigate = useNavigate()
     const param = useParams()
+    const MySwal = withReactContent(Swal)
 
     const handleSubmit = (e) => {
-        const MySwal = withReactContent(Swal)
         e.preventDefault()
         const object = {
             Judul: document.getElementById('judulbc').value,
@@ -37,7 +36,14 @@ export default function EditBroadcast() {
         const object = {
             id: param.id
         }
-        axios.post('http://localhost:5000/broadcast/send', object)
+        axios.post('http://localhost:5000/broadcast/send', object).then((res) => {
+            if(res.data.status === 200) {
+                MySwal.fire({
+                    title: 'Berhasil dikirim',
+                    icon: 'success'
+                })
+            }
+        })
     }
 
     const getData = () => {
