@@ -87,10 +87,10 @@ export default function Livechat({ socket }) {
             setOpen(true)
             setChat(data.data)
             curChat.current = data.data
-            debounce(() => {
-                var elementz = document.getElementById('messages50')
+            setTimeout(() => {
+                var elementz = document.getElementById('messages52')
                 elementz?.scrollIntoView()
-            }, 500)
+            }, 1000);
             setLoadingMessage(false)
         })
     }
@@ -141,8 +141,9 @@ export default function Livechat({ socket }) {
                 setChat(datachat)
                 curChat.current = datachat
                 if(Math.abs(element?.scrollHeight - element?.clientHeight - element?.scrollTop) < 1000) {
-                    var elementz = document.getElementById(`messages${datachat.pesan.length}`)
-                    elementz?.scrollIntoView()
+                    setTimeout(() => {
+                        element.scrollTo(0, 200000)
+                    }, 500);
                 }
             }
             setLoadingMessage(false)
