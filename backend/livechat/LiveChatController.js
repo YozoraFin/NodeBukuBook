@@ -33,7 +33,8 @@ export const getNewMessage = async(socket, msg) => {
                 time: time,
                 type: message.type,
                 body: message.body,
-                timestamp: message.timestamp
+                timestamp: message.timestamp,
+                id: message.id
             }
             var datacontact = {
                 nama: name,
@@ -59,8 +60,12 @@ export const getChat = async(socket) => {
         var profile
         var body
         var dataMessage = []
+        var pinned = 0
         for (let index = 0; index < slice.length; index++) {
             const element = slice[index];
+            if(element.pinned) {
+                pinned += 1
+            }
             profile = await (await element.getContact()).getProfilePicUrl()
             message = await element.fetchMessages({limit: 1})
             body = {
@@ -78,7 +83,8 @@ export const getChat = async(socket) => {
             })
         }
         socket.emit('sendMessage', {
-            data: dataMessage
+            data: dataMessage,
+            pinned: pinned
         })
         
     } catch (error) {
@@ -133,7 +139,7 @@ export const getNextChat = async(socket, data) => {
 export const getDetailChat = async(socket, data) => {
     try {
         totalMessage = 0
-        var contact = await client.getContactById(data.id)
+        var contact = await client?.getContactById(data?.id)
         var chat = await contact.getChat()
         var fMessage = await chat.fetchMessages({limit: 50})
         var message = []
@@ -160,7 +166,9 @@ export const getDetailChat = async(socket, data) => {
             message.push({
                 body: element.body,
                 fromMe: element.fromMe,
-                time: time
+                time: time,
+                type: element.type,
+                id: element.id
             })
         }
     
@@ -223,7 +231,9 @@ export const getNextDetail = async(socket, data) => {
                 body: element.body,
                 fromMe: element.fromMe,
                 time: time,
-                timestamp: element.timestamp
+                timestamp: element.timestamp,
+                type: element.type,
+                id: element.id
             })
         }
 
@@ -245,28 +255,122 @@ export const getNextDetail = async(socket, data) => {
 }
 
 export const getUnreadNotif = async(socket) => {
-    try {
-        var chats = await client.getChats()
-        var total = 0
+    setTimeout(async() => {
+        try {
+            var chats = await client.getChats()
+            var total = 0
 
-        for (let index = 0; index < chats.length; index++) {
-            const element = chats[index];
-            if(element.unreadCount > 0) {
-                total += 1
+            for (let index = 0; index < chats.length; index++) {
+                const element = chats[index];
+                if(element.unreadCount > 0) {
+                    total += 1
+                }
+            }
+            socket.emit('sendUnreadNotif', {
+                notif: total
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }, 1000);
+}
+
+export const sendChat = async(data) => {
+    try {
+        client.sendMessage(data.id, data.message)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const deleteMessage = async(socket, data) => {
+    try {
+        const chat = await client.getChatById(data.chatId)
+        const messages = await chat.fetchMessages({limit: data.page*50+50})
+        let message
+        for (let index = 0; index < messages.length; index++) {
+            const element = messages[index];
+            if(element.id.id === data.messageId) {
+                message = element
             }
         }
-        console.log(total)
-        socket.emit('sendUnreadNotif', {
-            notif: total
+        message?.delete(data.everyone)
+        socket.emit('messageDeleted')
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const deleteMessageEveryone = async(socket, msg) => {
+    try {
+        const chat = await msg.getChat()
+        socket.emit('messageDeleted', {
+            id: chat.id
         })
     } catch (error) {
         console.log(error)
     }
 }
 
-export const sendChat = async(data) => {
+export const deleteMessageMe = async(socket, msg) => {
     try {
-        client.sendMessage(data.id, data.message)
+        const chat = await msg.getChat()
+        console.log(chat)
+        socket.emit('messageDeleted', {
+            id: chat.id
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const getMessageByOffset = async(socket, data) => {
+    try {
+        if(data.id !== '') {
+            totalMessage = 0
+            var contact = await client.getContactById(data.id)
+            var chat = await contact.getChat()
+            var fMessage = await chat.fetchMessages({limit: data.page*50+50})
+            var message = []
+            var profile = await contact.getProfilePicUrl()
+            var time
+            chat.sendSeen()
+        
+            for (let index = 0; index < fMessage.length; index++) {
+                const element = fMessage[index];
+                const month = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Ags","Sep","Okt","Nov","Des"];
+                const d = new Date(element.timestamp*1000)
+                const hari = Date.now()/1000 - 60*60*24
+                var minute
+                if(d.getMinutes() < 10) {
+                    minute = `0${d.getMinutes()}`
+                } else {
+                    minute = `${d.getMinutes()}`
+                }
+                if(element.timestamp < hari) {
+                    time = `${d.getDate()} ${month[d.getMonth()]}, ${d.getHours()}:${minute} `
+                } else {
+                    time = `${d.getHours()}:${minute}`
+                }
+                message.push({
+                    body: element.body,
+                    fromMe: element.fromMe,
+                    time: time,
+                    type: element.type,
+                    id: element.id
+                })
+            }
+        
+            var dataDetail = {
+                nama: chat.name,
+                pesan: message,
+                profile: profile
+            }
+        
+            socket.emit('sendDetailwOffset', {
+                data: dataDetail
+            })
+        }
     } catch (error) {
         console.log(error)
     }

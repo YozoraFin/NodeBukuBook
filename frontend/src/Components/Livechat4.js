@@ -206,12 +206,13 @@ export default function Livechat({ socket }) {
                     socket.emit('deleteMessage', {
                         chatId: idChat.id,
                         messageId: id,
-                        page: offsetMessage,
+                        page: offsetMessage+1,
                         everyone: true
                     })
                     setLoadingMessage(true)
                 }
             }
+            console.log('halo')
         })
     }
 
@@ -277,19 +278,15 @@ export default function Livechat({ socket }) {
     }, [offsetMessage])
 
     useEffect(() => {
-        let timer
-        clearTimeout(timer)
         socket.on('sendDetailwOffset', (data) => {
-            timer = setTimeout(() => {
-                console.log(data)
-                setOpen(true)
-                setChat(data.data)
-                curChat.current = data.data
-                setTimeout(() => {
-                    document.getElementById('chat-history')?.scrollTo(0, 200000)
-                }, 500);
-                setLoadingMessage(false)
+            socket.emit('getUnreadNotif')
+            setOpen(true)
+            setChat(data.data)
+            curChat.current = data.data
+            setTimeout(() => {
+                document.getElementById('chat-history')?.scrollTo(0, 200000)
             }, 500);
+            setLoadingMessage(false)
         })
     }, [idChat])
 
@@ -313,17 +310,11 @@ export default function Livechat({ socket }) {
     useEffect(() => {
         socket.on('messageDeleted', () => {
             socket.emit('getMessageByOffset', {
-                id: curIdChat.current.id,
+                id: idChat.id,
                 page: offsetMessage+1
             })
         })
-    }, [offsetMessage])
-
-    useEffect(() => {
-        socket.on('messageDeleted', () => {
-            console.log('woaaaaaaaaa')
-        })
-    })
+    }, [idChat])
 
     const format_text = (text) => {
         return text.replace(/\n/g, '<br>').replace(/(?:\*)(?:(?!\s))((?:(?!\*|<br>).)+)(?:\*)/g,'<b>$1</b>')
@@ -343,9 +334,9 @@ export default function Livechat({ socket }) {
                                         </div>
                                         <div className={msg?.fromMe ? "message other-message float-right" : "message my-message"} dangerouslySetInnerHTML={{ __html: msgs }}></div>
                                         <i className={msg?.fromMe ? "fa-solid fa-ellipsis-vertical myoptions float-right px-3" : "fa-solid fa-ellipsis-vertical options px-3 py-1"} type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                        <div className="dropdown-menu m-0 p-0" aria-labelledby="dropdownMenuButton">
-                                            <p className="dropdown-item m-0 py-2" onClick={() => {}}>Balas</p>
-                                            <p className="dropdown-item m-0 py-2" onClick={() => {handleDeleteMessage(msg?.id?.id)}}>Hapus</p>
+                                        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <p className="dropdown-item m-0" onClick={() => {}}>Balas</p>
+                                            <p className="dropdown-item m-0" onClick={() => {handleDeleteMessage(msg?.id?.id)}}>Hapus</p>
                                         </div>
                                     </li>
                                 )

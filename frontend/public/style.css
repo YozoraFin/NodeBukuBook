@@ -156,6 +156,11 @@ background: #efefef;
 cursor: pointer
 }
 
+.people-list .chat-list li .active {
+    background: #efefef;
+    cursor: pointer
+}
+
 .people-list .chat-list li.active {
 background: #efefef
 }
@@ -268,7 +273,8 @@ line-height: 26px;
 font-size: 16px;
 border-radius: 7px;
 display: inline-block;
-position: relative
+position: relative;
+max-width: 600px;
 }
 
 .chat .chat-history .message:after {
@@ -398,4 +404,25 @@ overflow-x: auto
 height: calc(100vh - 350px);
 overflow-x: auto
 }
+}
+
+.optionswrap {
+    position: relative;
+}
+
+.options {
+    position: absolute;
+    top: 60%;
+    opacity: 0;
+    transition: all 250ms;
+}
+
+.myoptions {
+    transform: translate(0, 50%);
+    opacity: 0;
+    transition: all 250ms;
+}
+
+.optionswrap:hover .myoptions, .optionswrap:hover .options {
+    opacity: 1;
 }
