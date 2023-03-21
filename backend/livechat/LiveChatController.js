@@ -1,3 +1,5 @@
+import pkg from 'whatsapp-web.js';
+const { MessageMedia } = pkg;
 import client from "../client/client.js"
 var totalMessage = 0
 
@@ -27,6 +29,38 @@ export const getNewMessage = async(socket, msg) => {
             } else {
                 time = `${d.getHours()}:${minute}`
             }
+            let reply
+            let replydata
+            if(message.hasQuotedMsg) {
+                reply = await message.getQuotedMessage()
+                var chatreply = await reply.getChat()
+                var link
+                if(reply.hasMedia) {
+                    var replymedia = await reply.downloadMedia()
+                    link = 'data:'+replymedia.mimetype+';base64,'+replymedia.data
+                } else {
+                    link = ''
+                }
+                replydata = {
+                    body: reply.body,
+                    fromMe: reply.fromMe,
+                    name: chatreply.name,
+                    type: reply.type,
+                    id: reply.id,
+                    hasMedia: reply.hasMedia,
+                    media: link
+                }
+            }
+
+            var link
+
+            if(element.hasMedia && element.type !== 'revoked') {
+                var mediadata = await message.downloadMedia()
+                link = 'data:'+mediadata.mimetype+';base64,'+mediadata.data
+            } else {
+                link = ''
+            }
+
             var body = {
                 message: message.body,
                 fromMe: message.fromMe,
@@ -34,7 +68,11 @@ export const getNewMessage = async(socket, msg) => {
                 type: message.type,
                 body: message.body,
                 timestamp: message.timestamp,
-                id: message.id
+                id: message.id,
+                hasReply: message.hasQuotedMsg,
+                reply: replydata,
+                hasMedia: (message.hasMedia && message.type !== 'revoked'),
+                media: link
             }
             var datacontact = {
                 nama: name,
@@ -163,12 +201,48 @@ export const getDetailChat = async(socket, data) => {
             } else {
                 time = `${d.getHours()}:${minute}`
             }
+            let reply
+            let replydata
+            if(element.hasQuotedMsg) {
+                reply = await element.getQuotedMessage()
+                var chatreply = await reply.getChat()
+                var link
+                if(reply.hasMedia) {
+                    var replymedia = await reply.downloadMedia()
+                    link = 'data:'+replymedia?.mimetype+';base64,'+replymedia?.data
+                } else {
+                    link = ''
+                }
+                replydata = {
+                    body: reply.body,
+                    fromMe: reply.fromMe,
+                    name: chatreply.name,
+                    type: reply.type,
+                    id: reply.id,
+                    hasMedia: reply.hasMedia,
+                    media: link
+                }
+            }
+
+            var link
+
+            if(element.hasMedia && element.type !== 'revoked') {
+                var mediadata = await element.downloadMedia()
+                link = 'data:'+mediadata.mimetype+';base64,'+mediadata.data
+            } else {
+                link = ''
+            }
+
             message.push({
                 body: element.body,
                 fromMe: element.fromMe,
                 time: time,
                 type: element.type,
-                id: element.id
+                id: element.id,
+                hasReply: element.hasQuotedMsg,
+                reply: replydata,
+                hasMedia: (element.hasMedia && element.type !== 'revoked'),
+                media: link
             })
         }
     
@@ -227,13 +301,49 @@ export const getNextDetail = async(socket, data) => {
             } else {
                 time = `${d.getHours()}:${minute}`
             }
+            let reply
+            let replydata
+            if(element.hasQuotedMsg) {
+                reply = await element.getQuotedMessage()
+                var chatreply = await reply.getChat()
+                var link
+                if(reply.hasMedia) {
+                    var replymedia = await reply.downloadMedia()
+                    link = 'data:'+replymedia.mimetype+';base64,'+replymedia.data
+                } else {
+                    link = ''
+                }
+                replydata = {
+                    body: reply.body,
+                    fromMe: reply.fromMe,
+                    name: chatreply.name,
+                    type: reply.type,
+                    id: reply.id,
+                    hasMedia: reply.hasMedia,
+                    media: link
+                }
+            }
+
+            var link
+
+            if(element.hasMedia && element.type !== 'revoked') {
+                var mediadata = await element.downloadMedia()
+                link = 'data:'+mediadata.mimetype+';base64,'+mediadata.data
+            } else {
+                link = ''
+            }
+
             message.push({
                 body: element.body,
                 fromMe: element.fromMe,
                 time: time,
                 timestamp: element.timestamp,
                 type: element.type,
-                id: element.id
+                id: element.id,
+                hasReply: element.hasQuotedMsg,
+                reply: replydata,
+                hasMedia: (element.hasMedia && element.type !== 'revoked'),
+                media: link
             })
         }
 
@@ -277,13 +387,40 @@ export const getUnreadNotif = async(socket) => {
 
 export const sendChat = async(data) => {
     try {
-        client.sendMessage(data.id, data.message)
+        if(data.hasMedia) {
+            var media = await new MessageMedia(data.type, data.media.toString('base64'))
+            await client.sendMessage(data.id, data.message, {media: media})
+        } else {
+            client.sendMessage(data.id, data.message)
+        }
     } catch (error) {
         console.log(error)
     }
 }
 
-export const deleteMessage = async(socket, data) => {
+export const replyMessage = async(data) => {
+    try {
+        const chat = await client.getChatById(data.chatId)
+        const messages = await chat.fetchMessages({limit: data.page*50+50})
+        let message
+        for (let index = 0; index < messages.length; index++) {
+            const element = messages[index];
+            if(element.id.id === data.messageId) {
+                message = element
+            }
+        }
+        if(data.hasMedia) {
+            var media = await new MessageMedia(data.mimetype, data.media.toString('base64'))
+            await message.reply(media, data.message, {media: media})
+        } else {
+            message.reply(data.message)
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const deleteMessage = async(data) => {
     try {
         const chat = await client.getChatById(data.chatId)
         const messages = await chat.fetchMessages({limit: data.page*50+50})
@@ -295,17 +432,62 @@ export const deleteMessage = async(socket, data) => {
             }
         }
         message?.delete(data.everyone)
-        socket.emit('messageDeleted')
     } catch (error) {
         console.log(error)
     }
 }
 
+const getInfoDeleted = async(msg) => {
+    var chat = await msg.getChat()
+    var chatFContact = await chat.getContact()
+    var profile = await chatFContact.getProfilePicUrl()
+    var id = chat.id
+    var message = await chat.fetchMessages({limit: 1})
+    var unread = chat.unreadCount
+    var name = chat.name
+    var element = message
+    var time
+    const month = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Ags","Sep","Okt","Nov","Des"];
+    const d = new Date(element.timestamp*1000)
+    const hari = Date.now()/1000 - 60*60*24
+    var minute
+    if(d.getMinutes() < 10) {
+        minute = `0${d.getMinutes()}`
+    } else {
+        minute = `${d.getMinutes()}`
+    }
+    if(element.timestamp < hari) {
+        time = `${d.getDate()} ${month[d.getMonth()]}, ${d.getHours()}:${minute} `
+    } else {
+        time = `${d.getHours()}:${minute}`
+    }
+    var body = {
+        message: message[0].body,
+        fromMe: message[0].fromMe,
+        time: time,
+        type: message[0].type,
+        body: message[0].body,
+        timestamp: message[0].timestamp,
+        id: message[0].id
+    }
+    var datacontact = {
+        nama: name,
+        profile: profile,
+        pesan: body,
+        unread: unread,
+        id: id
+    }
+    return datacontact
+}
+
 export const deleteMessageEveryone = async(socket, msg) => {
     try {
         const chat = await msg.getChat()
+        const datauser = await getInfoDeleted(msg)
+
         socket.emit('messageDeleted', {
-            id: chat.id
+            id: chat.id,
+            data: datauser
         })
     } catch (error) {
         console.log(error)
@@ -315,9 +497,11 @@ export const deleteMessageEveryone = async(socket, msg) => {
 export const deleteMessageMe = async(socket, msg) => {
     try {
         const chat = await msg.getChat()
-        console.log(chat)
+        const datauser = await getInfoDeleted(msg)
+
         socket.emit('messageDeleted', {
-            id: chat.id
+            id: chat.id,
+            data: datauser
         })
     } catch (error) {
         console.log(error)
@@ -352,12 +536,48 @@ export const getMessageByOffset = async(socket, data) => {
                 } else {
                     time = `${d.getHours()}:${minute}`
                 }
+                let reply
+                let replydata
+                if(element.hasQuotedMsg) {
+                    reply = await element.getQuotedMessage()
+                    var chatreply = await reply.getChat()
+                    var link
+                    if(reply.hasMedia) {
+                        var replymedia = await reply.downloadMedia()
+                        link = 'data:'+replymedia.mimetype+';base64,'+replymedia.data
+                    } else {
+                        link = ''
+                    }
+                    replydata = {
+                        body: reply.body,
+                        fromMe: reply.fromMe,
+                        name: chatreply.name,
+                        type: reply.type,
+                        id: reply.id,
+                        hasMedia: reply.hasMedia,
+                        media: link
+                    }
+                }
+
+                var link
+    
+                if(element.hasMedia && element.type !== 'revoked') {
+                    var mediadata = await element.downloadMedia()
+                    link = 'data:'+mediadata.mimetype+';base64,'+mediadata.data
+                } else {
+                    link = ''
+                }
+
                 message.push({
                     body: element.body,
                     fromMe: element.fromMe,
                     time: time,
                     type: element.type,
-                    id: element.id
+                    id: element.id,
+                    hasReply: element.hasQuotedMsg,
+                    reply: replydata,
+                    hasMedia: (element.hasMedia && element.type !== 'revoked'),
+                    media: link
                 })
             }
         

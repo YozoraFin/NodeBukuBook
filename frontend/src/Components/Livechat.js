@@ -3,6 +3,7 @@ import Skeleton from 'react-loading-skeleton'
 import SkeletonChat from './SkeletonChat.js'
 import withReactContent from 'sweetalert2-react-content'
 import Swal from 'sweetalert2'
+import RingLoader from "react-spinners/RingLoader.js";
 
 export default function Livechat({ socket }) {
     const [message, setMessage] = useState([])
@@ -17,18 +18,27 @@ export default function Livechat({ socket }) {
         id: '',
         index: 0
     })
-    const [loadingMessage, setLoadingMessage] = useState(true)
+    const [loadingMessage, setLoadingMessage] = useState(false)
     const [loadingNextMessage, setLoadingNextMessage] = useState(false)
     const [offsetChat, setOffsetChat] = useState(0)
     const [offsetMessage, setOffsetMessage] = useState(0)
     const [moreMessage, setMoreMessage] = useState(true)
+    const [heightStatus, setHeightStatus] = useState(true)
+    const [selectedMedia, setSelectedMedia] = useState('')
+    const [replyMessage, setReplyMessage] = useState({
+        content: '',
+        id: '',
+        hasMedia: false,
+        media: ''
+    })
     const curIdChat = useRef({
         id: '',
         index: 0
     })
     const curChat = useRef({})
     const curPin = useRef(0)
-
+    const MySwal = withReactContent(Swal)
+    
     const getMessage = () => {
         socket.emit('getMessage', {
             page: 0
@@ -80,7 +90,7 @@ export default function Livechat({ socket }) {
         }
     }
 
-    var scrolling = debounce(handleScrollChat, 500)
+    var scrolling = debounce(handleScrollChat, 200)
 
     const getDetailMessage = () => {
         setOffsetMessage(0)
@@ -97,7 +107,7 @@ export default function Livechat({ socket }) {
             setTimeout(() => {
                 var elementz = document.getElementById('messages50')
                 elementz?.scrollIntoView()
-            }, 1000);
+            }, 200);
             setLoadingMessage(false)
         })
     }
@@ -117,18 +127,80 @@ export default function Livechat({ socket }) {
         }
     }
 
-    var scrollDetail = debounce(handleScrollDetail, 500)
+    var scrollDetail = debounce(handleScrollDetail, 200)
+
+    const handleMediaSelect = async() => {
+        var files = document.getElementById('messagemedia')?.files
+        var base64media = ''
+
+        if(files.length > 0) {
+            base64media = await getBase64File(files[0])
+        }
+        setSelectedMedia(base64media)
+        setHeightStatus(!heightStatus)
+    }
+
+    const getBase64File = (file) => {
+        return new Promise((resolve) => {
+            const media = file
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                const testResult = reader.result
+                resolve(testResult)
+            }
+            reader.readAsDataURL(media)
+        })
+    }
 
     const handleSubmitMessage = (e) => {
         e.preventDefault()
-        socket.emit('sendingMessage', {
-            id: idChat.id,
-            message: document.getElementById('message')?.value
-        })
-        document.getElementById('message').value = ''
+        var files = document.getElementById('messagemedia')?.files[0]
+        var message = document.getElementById('message')?.value
+        if(message !== '' || selectedMedia !== '') {
+            var hasMedia = false
+            if(selectedMedia !== '') {
+                hasMedia = true
+            }
+            if(message === '') {
+                message = ''
+            }
+
+            if(replyMessage.id === '' && replyMessage.content === '') {
+                socket.emit('sendingMessage', {
+                    id: idChat.id,
+                    message: message,
+                    media: files,
+                    hasMedia: hasMedia,
+                    type: files?.type
+                })
+            } else {
+                socket.emit('sendReplyMessage', {
+                    chatId: idChat.id,
+                    message: message,
+                    messageId: replyMessage.id,
+                    media: files,
+                    hasMedia: hasMedia,
+                    type: files.type
+                })
+            }
+            setReplyMessage({
+                id: '',
+                content: '',
+                hasMedia: false,
+                media: ''
+            })
+            document.getElementById('message').value = ''
+            document.getElementById('messagemedia').value = null
+            setSelectedMedia('')
+            setHeightStatus(!heightStatus)
+            setTimeout(() => {
+                document.getElementById('chat-history').scrollTo(0, 200000)
+            }, 200);
+        }
     }
     
     const getNewMessage = (id, data) => {
+        console.log(data.unread)
         var dataVes = data
         var dmessage = message
         const isExist = (k) => {
@@ -154,7 +226,7 @@ export default function Livechat({ socket }) {
                 if(Math.abs(element?.scrollHeight - element?.clientHeight - element?.scrollTop) < 1000) {
                     setTimeout(() => {
                         element.scrollTo(0, 200000)
-                    }, 500);
+                    }, 200);
                 }
             }
             setLoadingMessage(false)
@@ -172,25 +244,58 @@ export default function Livechat({ socket }) {
             dmessage.splice(index+1, 1)
         } else if(index === -1) {
             dmessage.splice(curPin.current, 0, dataVes)
-        } else if(index > 1) {
+        } else if(index > curPin.current-1) {
             dmessage.splice(curPin.current, 0, dataVes)
             dmessage.splice(index+1, 1)
         }
         setMessage(dmessage)
     }
 
-    const handleDeleteMessage = (id) => {
-        const MySwal = withReactContent(Swal)
-        MySwal.fire({
-            title: 'Hapus pesan',
-            showCancelButton: true,
-            showDenyButton: true,
-            confirmButtonText: 'Hapus untuk saya',
-            denyButtonText: 'Hapus untuk semua',
-            cancelButtonText: 'Tidak',
-            icon: 'question',
-            text: 'Pesan yang sudah dihapus tidak dapat dikembalikan'
-        }).then((res) => {
+    const deletingChat = (id, data) => {
+        if(id) {
+            var dataVes = data
+            var dmessage = message
+            const isExist = (k) => {
+                if(k.id._serialized === id) {
+                    return true
+                }
+                return false
+            }
+
+            
+            var index = dmessage.findIndex(isExist)
+            if(index > -1) {
+                dmessage.splice(index, 1, dataVes)
+            }
+
+            setMessage(dmessage)
+        }
+    }
+
+    const handleDeleteMessage = (id, type, fromMe) => {
+        let oSwal
+        if(type === 'revoked' || !fromMe) {
+            oSwal = {
+                title: 'Hapus pesan',
+                showCancelButton: true,
+                confirmButtonText: 'Hapus untuk saya',
+                cancelButtonText: 'Tidak',
+                icon: 'question',
+                text: 'Pesan yang sudah dihapus tidak dapat dikembalikan'
+            }
+        } else {
+            oSwal = {
+                title: 'Hapus pesan',
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: 'Hapus untuk saya',
+                denyButtonText: 'Hapus untuk semua',
+                cancelButtonText: 'Tidak',
+                icon: 'question',
+                text: 'Pesan yang sudah dihapus tidak dapat dikembalikan'
+            }
+        }
+        MySwal.fire(oSwal).then((res) => {
             if(res.isConfirmed) {
                 if(idChat.id !== '') {
                     socket.emit('deleteMessage', {
@@ -199,7 +304,6 @@ export default function Livechat({ socket }) {
                         page: offsetMessage+1,
                         everyone: false
                     })
-                    setLoadingMessage(true)
                 }
             } else if(res.isDenied) {
                 if(idChat.id !== '') {
@@ -209,11 +313,37 @@ export default function Livechat({ socket }) {
                         page: offsetMessage,
                         everyone: true
                     })
-                    setLoadingMessage(true)
                 }
             }
         })
     }
+
+    useEffect(() => {
+        var reply = document.getElementById('reply-content')
+        var chat = document.getElementById('chat-content')
+        var element = document.getElementById('chat-history')
+        if(element?.style) {
+            if((replyMessage.content === '' || replyMessage.media === '') && selectedMedia === '') {
+                element.style.height = '440px'
+                chat.style.backgroundColor = ''
+                reply.style.borderRight = ''
+            } else if((replyMessage.content !== '' || replyMessage.media !== '') && selectedMedia === '') {
+                element.style.height = '400px'
+                chat.style.backgroundColor = ''
+                reply.style.borderRight = ''
+            } else if((replyMessage.content === '' || replyMessage.media === '') && selectedMedia !== '') {
+                element.style.height = '370px'
+                element.style.border = 'none'
+                chat.style.backgroundColor = '#e8f1f3'
+                reply.style.borderRight = 'none'
+            } else if((replyMessage.content !== '' || replyMessage.media !== '') && selectedMedia !== '') {
+                element.style.height = '350px'
+                element.style.border = 'none'
+                chat.style.backgroundColor = '#e8f1f3'
+                reply.style.borderRight = 'none'
+            }
+        }
+    }, [heightStatus])
 
     useEffect(() => {
         if(message.length < 20) {
@@ -228,7 +358,6 @@ export default function Livechat({ socket }) {
                     socket.emit('getUnreadNotif', {})
                     setNewMessage(data.data)
                     getNewMessage(data.data.id['_serialized'], data.data)
-                    setLoadingMessage(true)
                 }
             })
         }
@@ -270,7 +399,7 @@ export default function Livechat({ socket }) {
                         var elementz = document.getElementById('messages51')
                         elementz?.scrollIntoView()
                         lanjut = false
-                    }, 500);
+                    }, 200);
                 }
             }
         })
@@ -281,15 +410,11 @@ export default function Livechat({ socket }) {
         clearTimeout(timer)
         socket.on('sendDetailwOffset', (data) => {
             timer = setTimeout(() => {
-                console.log(data)
                 setOpen(true)
                 setChat(data.data)
                 curChat.current = data.data
-                setTimeout(() => {
-                    document.getElementById('chat-history')?.scrollTo(0, 200000)
-                }, 500);
                 setLoadingMessage(false)
-            }, 500);
+            }, 200);
         })
     }, [idChat])
 
@@ -300,52 +425,67 @@ export default function Livechat({ socket }) {
     }, [idChat])
 
     useEffect(() => {
-        if(!loadingMessage) {
-            var elementz = document.getElementById('messages50')
-            elementz?.scrollIntoView()
-        }
-    }, [loadingMessage])
-
-    useEffect(() => {
         getChat()
     }, [chat])
 
     useEffect(() => {
-        socket.on('messageDeleted', () => {
-            socket.emit('getMessageByOffset', {
-                id: curIdChat.current.id,
-                page: offsetMessage+1
-            })
-        })
-    }, [offsetMessage])
+        getSidebar()
+    }, [message])
 
     useEffect(() => {
-        socket.on('messageDeleted', () => {
-            console.log('woaaaaaaaaa')
+        socket.on('messageDeleted', (data) => {
+            socket.emit('getMessageByOffset', {
+                id: curIdChat.current.id,
+                page: offsetMessage
+            })
+            deletingChat(data?.id?._serialized, data?.data)
         })
-    })
+    }, [message])
 
     const format_text = (text) => {
-        return text.replace(/\n/g, '<br>').replace(/(?:\*)(?:(?!\s))((?:(?!\*|<br>).)+)(?:\*)/g,'<b>$1</b>')
+        return text?.replace(/\n/g, '<br>').replace(/(?:\*)(?:(?!\s))((?:(?!\*|<br>).)+)(?:\*)/g,'<b>$1</b>')
            .replace(/(?:_)(?:(?!\s))((?:(?!<br>|_).)+)(?:_)/g,'<i>$1</i>')
            .replace(/(?:~)(?:(?!\s))((?:(?!<br>|~).)+)(?:~)/g,'<s>$1</s>')
            .replace(/(?:```)(?:(?!\s))((?:(?!<br>|```).)+)(?:```)/g,'<tt>$1</tt>')
     }
+
+    console.log(chat)
     
     const getChat = () => {
         const chatmessage = open ?
-                            chat.pesan.map((msg, index) => {
+                            chat?.pesan?.map((msg, index) => {
                                 var msgs = msg?.type === 'revoked' ? '<p class="mb-0 text-secondary"><i class="fa-solid fa-ban"></i> Pesan ini telah dihapus</p>' : format_text(msg?.body)
+                                var replymsg = msg?.reply?.body?.length > 20 ? msg?.reply?.body?.substring(0, 20)+'...' : msg?.reply?.body
                                 return(
                                     <li id={`messages${index+1}`} className="clearfix optionswrap" key={`chatmessage${index}`}>
                                         <div className={msg?.fromMe ? "message-data text-right" : "message-data"}>
                                             <span className="message-data-time">{msg?.time}</span>
                                         </div>
-                                        <div className={msg?.fromMe ? "message other-message float-right" : "message my-message"} dangerouslySetInnerHTML={{ __html: msgs }}></div>
+                                        <div className={msg?.fromMe ? msg?.type === 'sticker' && !msg?.hasReply ? "other-message float-right text-left" : 'message other-message float-right text-left' : msg?.type === 'sticker' && !msg?.hasReply ? "message" : 'message my-message'}>
+                                            {msg.hasReply ?
+                                                <div className={msg?.fromMe ? "myreplymessage overflow-hidden" : "replymessage"}>
+                                                    <div className="row">
+                                                        <div className="col-8">
+                                                            <div className="reply-name text-primary">
+                                                                {msg?.reply?.fromMe ? 'Anda' : msg?.reply?.name}
+                                                            </div>
+                                                            <div className="reply-message">
+                                                                {msg?.reply?.hasMedia && msg?.reply?.body === '' ? msg?.reply?.type === 'image' ? <p className="p-0 m-0 text-secondary"><i className="fa-solid fa-image"></i> Foto</p> : <p className="p-0 m-0 text-secondary"><i className="fa-solid fa-note-sticky"></i> Stiker</p> : replymsg}
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-4 p-0">
+                                                            {msg?.reply?.hasMedia ? <img className='message-reply-media' src={msg?.reply?.media} /> : ''}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            : ''}
+                                            {msg?.hasMedia && msg?.type === 'image' ? <img className={msg?.hasReply ? 'message-media mt-4' : 'message-media'} src={msg?.media} alt="" /> : msg?.hasMedia && msg?.type === 'sticker' ? <img className={msg?.hasReply ? 'message-media mt-4 media-sticker' : 'message-media media-sticker'} src={msg?.media} alt="" /> : ''}
+                                            {msg?.body === '' && msg?.type !== 'revoked' ? '' : <div className={msg?.hasReply || msg?.hasMedia ? 'pt-3 text-left' : 'text-left'} dangerouslySetInnerHTML={{ __html: msgs }}></div>}
+                                        </div>
                                         <i className={msg?.fromMe ? "fa-solid fa-ellipsis-vertical myoptions float-right px-3" : "fa-solid fa-ellipsis-vertical options px-3 py-1"} type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                                         <div className="dropdown-menu m-0 p-0" aria-labelledby="dropdownMenuButton">
-                                            <p className="dropdown-item m-0 py-2" onClick={() => {}}>Balas</p>
-                                            <p className="dropdown-item m-0 py-2" onClick={() => {handleDeleteMessage(msg?.id?.id)}}>Hapus</p>
+                                            {msg?.type !== 'revoked' ? <p className="dropdown-item m-0 py-2" onClick={() => {setReplyMessage({content: msgs, id: msg?.id?.id, hasMedia: msg?.hasMedia, media: msg?.media}); setHeightStatus(!heightStatus)}}>Balas</p> : ''}
+                                            <p className="dropdown-item m-0 py-2" onClick={() => {handleDeleteMessage(msg?.id?.id, msg?.type, msg?.fromMe)}}>Hapus</p>
                                         </div>
                                     </li>
                                 )
@@ -355,14 +495,8 @@ export default function Livechat({ socket }) {
         return chatmessage
     }
 
-    const handleRemoveNotif = (index) => {
-        var messagedata = message
-        messagedata[index].unread = 0
-        setMessage(messagedata)
-        socket.emit('getUnreadNotif', {})
-    }
-
-    const sidebar = loadingChat ?
+    const getSidebar = () => {
+        const sidebar = loadingChat ?
                     (
                         <SkeletonChat jumlah={20}/>
                     )
@@ -389,6 +523,15 @@ export default function Livechat({ socket }) {
                             </li>
                         )
                     })
+        return sidebar
+    }
+
+    const handleRemoveNotif = (index) => {
+        var messagedata = message
+        messagedata[index].unread = 0
+        setMessage(messagedata)
+        socket.emit('getUnreadNotif', {})
+    }
 
     return (
         <section className="content-wrapper">
@@ -398,11 +541,23 @@ export default function Livechat({ socket }) {
                         <div className="card chat-app">
                             <div onScroll={scrolling} id="plist" className="people-list">
                                 <ul className="list-unstyled chat-list mb-0">
-                                    {sidebar}
+                                    {getSidebar()}
                                     {loadingChatNext ? <SkeletonChat jumlah={20}/> : ''}
                                 </ul>
                             </div>
-                            <div className="chat">
+                            <div className="chat" id='chat-content'>
+                                <RingLoader
+                                    color={'#0000FF'}
+                                    loading={loadingMessage}
+                                    size={50}
+                                    aria-label="Loading Spinner"
+                                    data-testid="loader"
+                                    cssOverride={{
+                                        position: 'relative',
+                                        top: '40%',
+                                        left: '50%'
+                                    }}
+                                />
                                 {
                                     open ? 
                                     (
@@ -419,21 +574,63 @@ export default function Livechat({ socket }) {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="chat-history" id='chat-history' onScroll={scrollDetail}>
-                                                <ul className="m-b-0">
-                                                    {getChat()}
-                                                </ul>
-                                            </div>
-                                            <form onSubmit={handleSubmitMessage} >
-                                                <div className="chat-message clearfix">
-                                                    <div className="input-group mb-0">
-                                                        <input required type="text" id='message' className="form-control" placeholder="Enter text here..."/>
-                                                        <div className="input-group-prepend">
-                                                            <button className="input-group-text"><i className="fa-solid fa-paper-plane"></i></button>
+                                            <div className="chat-wrapper">
+                                                <div className="chat-history" id='chat-history' onScroll={scrollDetail}>
+                                                    {selectedMedia === '' ? 
+                                                        <ul className="m-b-0">
+                                                            {getChat()}
+                                                        </ul>
+                                                        :
+                                                        <div className="selected-media">
+                                                            <div className="row">
+                                                                <div className="col-12">
+                                                                    <div className="select-media-cancel-wrapper" onClick={() => {setHeightStatus(!heightStatus); setSelectedMedia(''); setTimeout(() => {document.getElementById('chat-history').scrollTo(0, 20000)}, 200);}}>
+                                                                        <div className="select-media-cancel-button">
+                                                                            X
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="col-12 text-center">
+                                                                    <img className='selected-media-img' src={selectedMedia} alt="" />
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    }
                                                 </div>
-                                            </form>
+                                                <div className="w-100">
+                                                    <form onSubmit={handleSubmitMessage}>
+                                                        <div className={replyMessage.content !== '' || replyMessage.hasMedia ? "chat-message clearfix py-0" : "chat-message clearfix"}>
+                                                            <div id='reply-content' className={replyMessage.content !== '' || replyMessage.hasMedia ? 'reply-content pl-2' : 'reply-content reply-closed d-none'}>
+                                                                <div className="row">
+                                                                    <div className="col-9 pt-1">
+                                                                        {replyMessage.content.length > 100 ? replyMessage.content.substring(0, 100)+'...' : replyMessage.content}
+                                                                    </div>
+                                                                    <div className="col-3 text-right reply-cancel p-0">
+                                                                        <div className="mr-2 position-relative">
+                                                                            <img className='reply-content-media' src={replyMessage.media} alt="" />
+                                                                            <div onClick={() => {setReplyMessage({content: '', id: '', media: '', hasMedia: false}); setHeightStatus(!heightStatus)}} className={replyMessage.content === '' && replyMessage.media === '' ? 'position-absolute reply-cancel-button d-none' : 'position-absolute reply-cancel-button'}>
+                                                                                <div className="reply-cancel-button-wrapper">
+                                                                                    <div className="reply-cancel-button-button">
+                                                                                        x
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="input-group mb-0">
+                                                                <input onChange={handleMediaSelect} className='d-none' type="file" id='messagemedia' />
+                                                                <input type="text" id='message' className="form-control" placeholder="Enter text here..."/>
+                                                                <div className="input-group-prepend">
+                                                                    <button onClick={() => {document.getElementById('messagemedia').click()}} type='button' className="input-group-text"><i className="fa-solid fa-image"></i></button>
+                                                                    <button type='submit' className="input-group-text"><i className="fa-solid fa-paper-plane"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </Fragment>
                                     )
                                     :

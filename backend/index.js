@@ -20,8 +20,8 @@ import OrderRouter from './router/OrderRouter.js';
 import client from './client/client.js';
 import BroadcastRouter from './router/BroadcastRouter.js';
 import { Server } from 'socket.io';
+import { deleteMessage, deleteMessageEveryone, deleteMessageMe, getChat, getDetailChat, getMessageByOffset, getNewMessage, getNextChat, getNextDetail, getUnreadNotif, replyMessage, sendChat } from './livechat/LiveChatController.js';
 import http  from 'http'
-import { deleteMessage, deleteMessageEveryone, deleteMessageMe, getChat, getDetailChat, getMessageByOffset, getNewMessage, getNextChat, getNextDetail, getUnreadNotif, sendChat } from './livechat/LiveChatController.js';
 
 const app = express()
 app.use(cors())
@@ -41,64 +41,72 @@ try {
 
 io.on('connection', (socket) => {
     console.log('socket connected')
-
-    client.on('message_create', (msg) => {
-        getNewMessage(socket, msg)
-        getUnreadNotif(socket)
-        console.log('message created')
-    })
-
-    client.on('message_revoke_me', (msg) => {
-        deleteMessageMe(socket, msg)
-    })
-
-    client.on('message_revoke_everyone', (msg) => {
-        deleteMessageEveryone(socket, msg)
-    })
-
-    socket.on('disconnect', () => {
-        console.log('bai')
-    })
-
+    
     socket.on('getMessage', () => {
-        getChat(socket)
+        getChat(io.sockets)
     })
-
+    
     socket.on('getNextMessage', async(data) => {
-        getNextChat(socket, data)
+        getNextChat(io.sockets, data)
     })
-
+    
     socket.on('getDetail', (data) => {
-        getDetailChat(socket, data)
-        getUnreadNotif(socket)
+        getDetailChat(io.sockets, data)
+        getUnreadNotif(io.sockets)
     })
-
+    
     socket.on('getNextDetail', (data) => {
-        getNextDetail(socket, data)
+        getNextDetail(io.sockets, data)
     })
-
+    
     socket.on('getUnreadNotif', () => {
-        getUnreadNotif(socket)
+        getUnreadNotif(io.sockets)
     })
-
+    
     socket.on('sendingMessage', (data) => {
         sendChat(data)
     }) 
-
+    
     socket.on('readChat', async(data) => {
         const contact = await client.getContactById(data.id)
         const chat = await contact.getChat()
         chat.sendSeen()
     })
 
-    socket.on('deleteMessage', (data) => {
-        deleteMessage(socket, data)
+    socket.on('sendReplyMessage', (data) => {
+        replyMessage(data)
     })
-
+    
+    socket.on('deleteMessage', (data) => {
+        deleteMessage(data)
+    })
+    
     socket.on('getMessageByOffset', (data) => {
-        getMessageByOffset(socket, data)
+        getMessageByOffset(io.sockets, data)
+    })
+    
+    socket.on('disconnect', () => {
+        console.log('socket Disconnected')
     })
 })
+
+client.on('message_create', (msg) => {
+    if(!msg.isStatus) {
+        getNewMessage(io.sockets, msg)
+        getUnreadNotif(io.sockets)
+        console.log('message created')
+    }
+})
+
+client.on('message_revoke_me', (msg) => {
+    deleteMessageMe(io.sockets, msg)
+})
+
+client.on('message_revoke_everyone', (msg) => {
+    deleteMessageEveryone(io.sockets, msg)
+})
+
+
 
 app.use(express.json());
 app.use('/foto', express.static('foto'));

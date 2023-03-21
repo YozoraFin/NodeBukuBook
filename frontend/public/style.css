@@ -195,7 +195,8 @@ font-size: 13px
 
 .chat .chat-header {
 padding: 15px 20px;
-border-bottom: 2px solid #f4f7f6
+border-bottom: 2px solid #f4f7f6;
+background-color: #ffffff;
 }
 
 .chat .chat-header img {
@@ -274,7 +275,6 @@ font-size: 16px;
 border-radius: 7px;
 display: inline-block;
 position: relative;
-max-width: 600px;
 }
 
 .chat .chat-history .message:after {
@@ -292,7 +292,8 @@ margin-left: -10px
 }
 
 .chat .chat-history .my-message {
-background: #efefef
+background: #efefef;
+max-width: 400px;
 }
 
 .chat .chat-history .my-message:after {
@@ -311,7 +312,8 @@ margin-left: -10px
 
 .chat .chat-history .other-message {
 background: #e8f1f3;
-text-align: right
+text-align: right;
+max-width: 400px;
 }
 
 .chat .chat-history .other-message:after {
@@ -425,4 +427,99 @@ overflow-x: auto
 
 .optionswrap:hover .myoptions, .optionswrap:hover .options {
     opacity: 1;
+}
+
+.message-reply-media {
+    max-height: 70px;
+    max-width: 50px;
+    float: right;
+}
+
+.myreplymessage {
+    background-color: #c7dde2;
+    border-radius: 7px;
+    padding: 0px 10px;
+    border-left: 3px solid #007bff;
+    min-width: 100px;
+}
+
+.replymessage {
+    background-color: #d9dedf;
+    border-radius: 7px;
+    padding: 0px 10px;
+    border-left: 3px solid #007bff;
+    min-width: 100px;
+}
+
+.reply-content {
+    background-color: #e8f1f3;
+    border-top-right-radius: 7px;
+    border-top-left-radius: 7px;
+    transition: all 250ms;
+    border: 1px solid #abb4b6;
+    border-bottom: none;
+    border-left: 3px solid #0000FF;
+}
+
+.reply-closed {
+    height: 0px;
+}
+
+.message-media {
+    width: 100%;
+    border-radius: 7px;
+}
+
+.reply-content-media {
+    max-width: 50px;
+    max-height: 70px;
+    border-top-right-radius: 7px;
+    border-top-left-radius: 7px;
+}
+
+.reply-cancel-button {
+    z-index: 1000;
+    top: 5px;
+    right: 5px;
+    opacity: 0.8;
+}
+
+.reply-cancel-button-wrapper {
+    border-radius: 50%;
+    background-color: whitesmoke;
+    height: 15px;
+    width: 15px;
+    position: relative;
+    cursor: pointer;
+}
+
+.reply-cancel-button-button {
+    position: absolute;
+    top: -36%;
+    right: 27%;
+}
+
+.selected-media-img {
+    max-height: 300px;
+    padding: 20px;
+}
+
+.select-media-cancel-wrapper {
+    border-radius: 50%;
+    background-color: whitesmoke;
+    height: 30px;
+    width: 30px;
+    position: relative;
+    cursor: pointer;
+}
+
+.select-media-cancel-button {
+    position: absolute;
+    top: -18%;
+    left: 29%;
+    font-size: 25px;
+}
+
+.media-sticker {
+    max-height: 200px;
 }
