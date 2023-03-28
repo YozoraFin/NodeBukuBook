@@ -22,6 +22,7 @@ import BroadcastRouter from './router/BroadcastRouter.js';
 import { Server } from 'socket.io';
 import { deleteMessage, deleteMessageEveryone, deleteMessageMe, getChat, getDetailChat, getMessageByOffset, getNewMessage, getNextChat, getNextDetail, getUnreadNotif, replyMessage, sendChat } from './livechat/LiveChatController.js';
 import http  from 'http'
+import bot from './BotTele/telebot.js';
 
 const app = express()
 app.use(cors())
@@ -100,10 +101,12 @@ client.on('message_create', (msg) => {
 
 client.on('message_revoke_me', (msg) => {
     deleteMessageMe(io.sockets, msg)
+    console.log('message deleted for me')
 })
 
 client.on('message_revoke_everyone', (msg) => {
     deleteMessageEveryone(io.sockets, msg)
+    console.log('message deleted for everyone')
 })
 
 
@@ -133,5 +136,8 @@ app.use('/order', OrderRouter)
 app.use('/broadcast', BroadcastRouter)
 
 client.initialize();
+bot.launch();
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
 hattp.listen(5000, () => {console.log('lesgo')})

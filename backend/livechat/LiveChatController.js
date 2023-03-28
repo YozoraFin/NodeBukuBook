@@ -3,6 +3,38 @@ const { MessageMedia } = pkg;
 import client from "../client/client.js"
 var totalMessage = 0
 
+const getFileSize = (num) => {
+    let mb = 1000000
+    let kb = 1000
+    let sz
+    let a
+    let b
+    if(num > 1000000) {
+        a = Math.floor(num/mb)
+        b = Math.round((num%mb)/100000)
+        if(b === 0 || a > 99) {
+            b = ''
+        } else {
+            b = `.${b}`
+        }
+        sz = 'MB'
+    } else if(num > 1000) {
+        a = Math.floor(num/kb)
+        b = Math.round((num%kb)/100)
+        if(b === 0 || a > 99) {
+            b = ''
+        } else {
+            b = `.${b}`
+        }
+        sz = 'kB'
+    } else {
+        a = num
+        b = ''
+        sz = 'B'
+    }
+    return `${a}${b} ${sz}`
+}
+
 export const getNewMessage = async(socket, msg) => {
     try {
         if(!msg.isStatus) {
@@ -34,12 +66,16 @@ export const getNewMessage = async(socket, msg) => {
             if(message.hasQuotedMsg) {
                 reply = await message.getQuotedMessage()
                 var chatreply = await reply.getChat()
-                var link
+                var link = ''
+                var filename = ''
+                var filesize = ''
+                var mimetype = ''
                 if(reply.hasMedia) {
                     var replymedia = await reply.downloadMedia()
                     link = 'data:'+replymedia.mimetype+';base64,'+replymedia.data
-                } else {
-                    link = ''
+                    filesize = getFileSize(replymedia.filesize)
+                    filename = replymedia.filename
+                    mimetype = replymedia.mimetype
                 }
                 replydata = {
                     body: reply.body,
@@ -48,17 +84,24 @@ export const getNewMessage = async(socket, msg) => {
                     type: reply.type,
                     id: reply.id,
                     hasMedia: reply.hasMedia,
-                    media: link
+                    media: link,
+                    filename: filename,
+                    filesize: filesize,
+                    mimetype: mimetype
                 }
             }
 
-            var link
+            var link = ''
+            var filename = ''
+            var filesize = ''
+            var mimetype = ''
 
             if(element.hasMedia && element.type !== 'revoked') {
                 var mediadata = await message.downloadMedia()
                 link = 'data:'+mediadata.mimetype+';base64,'+mediadata.data
-            } else {
-                link = ''
+                filename = mediadata.filename
+                filesize = getFileSize(mediadata.filesize)
+                mimetype = mediadata.mimetype
             }
 
             var body = {
@@ -72,7 +115,10 @@ export const getNewMessage = async(socket, msg) => {
                 hasReply: message.hasQuotedMsg,
                 reply: replydata,
                 hasMedia: (message.hasMedia && message.type !== 'revoked'),
-                media: link
+                media: link,
+                filename: filename,
+                filesize: filesize,
+                mimetype: mimetype
             }
             var datacontact = {
                 nama: name,
@@ -206,13 +252,18 @@ export const getDetailChat = async(socket, data) => {
             if(element.hasQuotedMsg) {
                 reply = await element.getQuotedMessage()
                 var chatreply = await reply.getChat()
-                var link
+                var link = ''
+                var filename = ''
+                var filesize = ''
+                var mimetype = ''
                 if(reply.hasMedia) {
                     var replymedia = await reply.downloadMedia()
+                    filesize = getFileSize(replymedia.filesize)
                     link = 'data:'+replymedia?.mimetype+';base64,'+replymedia?.data
-                } else {
-                    link = ''
+                    filename = replymedia.filename
+                    mimetype = replymedia.mimetype
                 }
+
                 replydata = {
                     body: reply.body,
                     fromMe: reply.fromMe,
@@ -220,17 +271,24 @@ export const getDetailChat = async(socket, data) => {
                     type: reply.type,
                     id: reply.id,
                     hasMedia: reply.hasMedia,
-                    media: link
+                    media: link,
+                    filename: filename,
+                    filesize: filesize,
+                    mimetype: mimetype
                 }
             }
 
-            var link
+            var link = ''
+            var filename = ''
+            var filesize
+            var mimetype = ''
 
             if(element.hasMedia && element.type !== 'revoked') {
                 var mediadata = await element.downloadMedia()
                 link = 'data:'+mediadata.mimetype+';base64,'+mediadata.data
-            } else {
-                link = ''
+                filename = mediadata.filename
+                filesize = getFileSize(mediadata.filesize)
+                mimetype = mediadata.mimetype
             }
 
             message.push({
@@ -242,7 +300,10 @@ export const getDetailChat = async(socket, data) => {
                 hasReply: element.hasQuotedMsg,
                 reply: replydata,
                 hasMedia: (element.hasMedia && element.type !== 'revoked'),
-                media: link
+                media: link,
+                filename: filename,
+                filesize: filesize,
+                mimetype: mimetype
             })
         }
     
@@ -306,12 +367,16 @@ export const getNextDetail = async(socket, data) => {
             if(element.hasQuotedMsg) {
                 reply = await element.getQuotedMessage()
                 var chatreply = await reply.getChat()
-                var link
+                var link = ''
+                var filename = ''
+                var filesize = ''
+                var mimetype = ''
                 if(reply.hasMedia) {
                     var replymedia = await reply.downloadMedia()
                     link = 'data:'+replymedia.mimetype+';base64,'+replymedia.data
-                } else {
-                    link = ''
+                    filename = replymedia.filename
+                    filesize = getFileSize(replymedia.filesize)
+                    mimetype = replymedia.mimetype
                 }
                 replydata = {
                     body: reply.body,
@@ -320,17 +385,24 @@ export const getNextDetail = async(socket, data) => {
                     type: reply.type,
                     id: reply.id,
                     hasMedia: reply.hasMedia,
-                    media: link
+                    media: link,
+                    filename: filename,
+                    filesize: filesize,
+                    mimetype: mimetype
                 }
             }
 
-            var link
+            var link = ''
+            var filename = ''
+            var filesize = ''
+            var mimetype = ''
 
             if(element.hasMedia && element.type !== 'revoked') {
                 var mediadata = await element.downloadMedia()
                 link = 'data:'+mediadata.mimetype+';base64,'+mediadata.data
-            } else {
-                link = ''
+                filename = mediadata.filename
+                filesize = getFileSize(mediadata.filesize)
+                mimetype = mediadata.mimetype
             }
 
             message.push({
@@ -343,7 +415,10 @@ export const getNextDetail = async(socket, data) => {
                 hasReply: element.hasQuotedMsg,
                 reply: replydata,
                 hasMedia: (element.hasMedia && element.type !== 'revoked'),
-                media: link
+                media: link,
+                filename: filename,
+                filesize: filesize,
+                mimetype: mimetype
             })
         }
 
@@ -388,8 +463,8 @@ export const getUnreadNotif = async(socket) => {
 export const sendChat = async(data) => {
     try {
         if(data.hasMedia) {
-            var media = await new MessageMedia(data.type, data.media.toString('base64'))
-            await client.sendMessage(data.id, data.message, {media: media})
+            var media = await new MessageMedia(data.type, data.media.toString('base64'), data.filename)
+            await client.sendMessage(data.id, data.message, {media: media, sendMediaAsDocument: data.isDocument, caption: data.message})
         } else {
             client.sendMessage(data.id, data.message)
         }
@@ -410,8 +485,8 @@ export const replyMessage = async(data) => {
             }
         }
         if(data.hasMedia) {
-            var media = await new MessageMedia(data.mimetype, data.media.toString('base64'))
-            await message.reply(media, data.message, {media: media})
+            var media = await new MessageMedia(data.type, data.media.toString('base64'), data.filename)
+            await message.reply(data.message, data.chatId, {media: media, sendMediaAsDocument: data.isDocument, caption: data.message})
         } else {
             message.reply(data.message)
         }
@@ -514,7 +589,7 @@ export const getMessageByOffset = async(socket, data) => {
             totalMessage = 0
             var contact = await client.getContactById(data.id)
             var chat = await contact.getChat()
-            var fMessage = await chat.fetchMessages({limit: data.page*50+50})
+            var fMessage = await chat.fetchMessages({limit: data.page*50})
             var message = []
             var profile = await contact.getProfilePicUrl()
             var time
@@ -541,12 +616,16 @@ export const getMessageByOffset = async(socket, data) => {
                 if(element.hasQuotedMsg) {
                     reply = await element.getQuotedMessage()
                     var chatreply = await reply.getChat()
-                    var link
+                    var link = ''
+                    var filename = ''
+                    var filesize = ''
+                    var mimetype = ''
                     if(reply.hasMedia) {
                         var replymedia = await reply.downloadMedia()
-                        link = 'data:'+replymedia.mimetype+';base64,'+replymedia.data
-                    } else {
-                        link = ''
+                        link = 'data:'+replymedia?.mimetype+';base64,'+replymedia?.data
+                        filename = replymedia?.filename
+                        filesize = getFileSize(replymedia?.filesize)
+                        mimetype = replymedia?.mimetype
                     }
                     replydata = {
                         body: reply.body,
@@ -555,17 +634,24 @@ export const getMessageByOffset = async(socket, data) => {
                         type: reply.type,
                         id: reply.id,
                         hasMedia: reply.hasMedia,
-                        media: link
+                        media: link,
+                        filename: filename,
+                        filesize: filesize,
+                        mimetype: mimetype
                     }
                 }
 
-                var link
+                var link = ''
+                var filename = ''
+                var filesize =''
+                var mimetype =''
     
                 if(element.hasMedia && element.type !== 'revoked') {
                     var mediadata = await element.downloadMedia()
                     link = 'data:'+mediadata.mimetype+';base64,'+mediadata.data
-                } else {
-                    link = ''
+                    filename = mediadata.filename
+                    filesize = getFileSize(mediadata.filesize)
+                    mimetype = mediadata.mimetype
                 }
 
                 message.push({
@@ -577,7 +663,10 @@ export const getMessageByOffset = async(socket, data) => {
                     hasReply: element.hasQuotedMsg,
                     reply: replydata,
                     hasMedia: (element.hasMedia && element.type !== 'revoked'),
-                    media: link
+                    media: link,
+                    filename: filename,
+                    filesize: filesize,
+                    mimetype: mimetype
                 })
             }
         

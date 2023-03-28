@@ -1,3 +1,7 @@
+.text-underline {
+    text-decoration: underline;
+}
+
 .btn {
     box-shadow: 0px 3px 4px -1px rgba(0,0,0,0.41) !important;
     -webkit-box-shadow: 0px 3px 4px -1px rgba(0,0,0,0.41) !important;
@@ -431,22 +435,19 @@ overflow-x: auto
 
 .message-reply-media {
     max-height: 70px;
-    max-width: 50px;
     float: right;
 }
 
 .myreplymessage {
     background-color: #c7dde2;
     border-radius: 7px;
-    padding: 0px 10px;
     border-left: 3px solid #007bff;
-    min-width: 100px;
+    min-width: 156px;
 }
 
 .replymessage {
     background-color: #d9dedf;
     border-radius: 7px;
-    padding: 0px 10px;
     border-left: 3px solid #007bff;
     min-width: 100px;
 }
@@ -467,11 +468,10 @@ overflow-x: auto
 
 .message-media {
     width: 100%;
-    border-radius: 7px;
+    border-radius: 14px;
 }
 
 .reply-content-media {
-    max-width: 50px;
     max-height: 70px;
     border-top-right-radius: 7px;
     border-top-left-radius: 7px;
@@ -522,4 +522,28 @@ overflow-x: auto
 
 .media-sticker {
     max-height: 200px;
+}
+
+.document-content {
+    background-color: #c7dde2;
+    border-radius: 7px;
+}
+
+.document-sub {
+    font-size: 13px;
+}
+
+.document-download {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid black;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.document-download:hover {
+    cursor: pointer;
 }
