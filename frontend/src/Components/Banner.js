@@ -63,7 +63,7 @@ export default function Banner() {
     const columnBanner = [
         {
             name: 'Banner',
-            selector: row => <div className="text-center"><img src={row?.SrcBanner} alt="" className='bannertable'/><br />{row.NameBanner}</div>
+            selector: row => <div className="text-center my-2"><img src={row?.SrcBanner} alt="" className='bannertable'/><br />{row.NameBanner}</div>
         },
         {
             name: 'Judul',

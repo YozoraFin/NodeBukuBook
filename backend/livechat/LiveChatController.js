@@ -284,11 +284,11 @@ export const getDetailChat = async(socket, data) => {
             var mimetype = ''
 
             if(element.hasMedia && element.type !== 'revoked') {
-                var mediadata = await element.downloadMedia()
-                link = 'data:'+mediadata.mimetype+';base64,'+mediadata.data
-                filename = mediadata.filename
-                filesize = getFileSize(mediadata.filesize)
-                mimetype = mediadata.mimetype
+                var mediadata = await element?.downloadMedia()
+                link = 'data:'+mediadata?.mimetype+';base64,'+mediadata?.data
+                filename = mediadata?.filename
+                filesize = getFileSize(mediadata?.filesize)
+                mimetype = mediadata?.mimetype
             }
 
             message.push({

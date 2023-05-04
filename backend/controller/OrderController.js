@@ -98,7 +98,7 @@ export const getOrderDetail = async (req, res) => {
                             attributes: [['Quantity', 'Jumlah'], 'Subtotal']
                         }
                     ],
-                    attributes: ['Alamat', 'Email', ['InvoiceNumber', 'Invoice'], 'Kodepos', 'Kota', 'Nama', 'NoTelp', 'Ongkir', 'Provinsi', 'Tanggal', 'Total', 'Subtotal']
+                    attributes: ['Alamat', 'Email', ['InvoiceNumber', 'Invoice'], 'Kodepos', 'Kota', 'Nama', 'NoTelp', 'Ongkir', 'Provinsi', 'Tanggal', 'Total', 'Subtotal', 'Potongan', 'PPN']
                 })
 
                 if(!order) {
@@ -169,7 +169,7 @@ export const getAdminOrderDetail = async(req, res) => {
                         attributes: [['Quantity', 'Jumlah'], 'Subtotal']
                     }
                 ],
-                attributes: ['Alamat', 'Email', ['InvoiceNumber', 'Invoice'], 'Kodepos', 'Kota', 'Nama', 'NoTelp', 'Ongkir', 'Provinsi', 'Tanggal', 'Total', 'Subtotal']
+                attributes: ['Alamat', 'Email', ['InvoiceNumber', 'Invoice'], 'Kodepos', 'Kota', 'Nama', 'NoTelp', 'Ongkir', 'Provinsi', 'Tanggal', 'Total', 'Subtotal', 'Potongan', 'PPN']
             })
             res.json({
                 status: 200,

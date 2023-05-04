@@ -115,7 +115,7 @@ export default function SiteConfig() {
         },
         {
             name: 'Opsi',
-            selector: row => <div className="text-center"><Link to={`/admin/social/${row.id}`} className='mr-2'><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeletSocial(row.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></div>,
+            selector: row => <div className="text-center my-3"><Link to={`/admin/social/${row.id}`} className='mr-2'><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeletSocial(row.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></div>,
             width: '180px'
         }
     ]

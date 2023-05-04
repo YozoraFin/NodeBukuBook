@@ -1,4 +1,4 @@
-export const InvoiceMail = (nama, alamat, notelp, invoice, tanggal, data, ongkir, total, email) => {
+export const InvoiceMail = (nama, alamat, notelp, invoice, tanggal, data, ongkir, total, email, potongan, PPN) => {
     return(
         `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" style="font-family:sans-serif">
@@ -118,6 +118,20 @@ export const InvoiceMail = (nama, alamat, notelp, invoice, tanggal, data, ongkir
                                                             <td style="padding: 0; border: 1px solid #333333;
                                                                 padding: 10px;" class="tddetail" align="center">
                                                                 Rp ${ongkir}
+                                                            </td>
+                                                        </tr>
+                                                        ${potongan}
+                                                        <tr>
+                                                            <td style="padding: 0;" colspan="2">
+        
+                                                            </td>
+                                                            <td style="padding: 0; border: 1px solid #333333;
+                                                                padding: 10px;" class="tddetail" align="center">
+                                                                PPN
+                                                            </td>
+                                                            <td style="padding: 0; border: 1px solid #333333;
+                                                                padding: 10px;" class="tddetail" align="center">
+                                                                Rp ${PPN}
                                                             </td>
                                                         </tr>
                                                         <tr>

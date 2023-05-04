@@ -119,7 +119,7 @@ export default function Buku() {
     const columnBuku = [
         {
             name: 'Sampul',
-            cell: (buk) => buk?.Sampul?.length > 0 ? <img src={buk?.Sampul[0]?.SrcGambar} height={80} width={60} /> : <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6ENpnnhPgDE0BVDsiIAOhl8dbGVE_5vc11w&usqp=CAU' width={60} height={80} />
+            cell: (buk) => buk?.Sampul?.length > 0 ? <img className='my-2' src={buk?.Sampul[0]?.SrcGambar} height={80} width={60} /> : <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6ENpnnhPgDE0BVDsiIAOhl8dbGVE_5vc11w&usqp=CAU' width={60} height={80} />
         },
         {
             name: 'Judul',
@@ -156,7 +156,7 @@ export default function Buku() {
         },
         {
             name: 'Opsi',
-            cell: (row) => <div className="text-center"><Link className='mr-2' to={'/admin/genre/'+row?.ID}><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeleteGenre(row?.ID)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></div>,
+            cell: (row) => <div className="text-center my-3"><Link className='mr-2' to={'/admin/genre/'+row?.ID}><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeleteGenre(row?.ID)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></div>,
             width: '180px'
         }
 

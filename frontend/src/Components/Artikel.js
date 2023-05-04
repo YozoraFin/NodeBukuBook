@@ -128,7 +128,7 @@ export default function Artikel() {
         },
         {
             name: 'Opsi',
-            cell: (row) => <div className="text-center"><Link className='mr-2' to={'/admin/artikel/'+row?.id}><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeleteArtikel(row?.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></div>,
+            cell: (row) => <div className="text-center my-3"><Link className='mr-2' to={'/admin/artikel/'+row?.id}><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeleteArtikel(row?.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></div>,
             width: '180px'
         }
     ]
@@ -141,7 +141,7 @@ export default function Artikel() {
         },
         {
             name: 'Opsi',
-            cell: (row) => <div className="text-center"><Link className='mr-2' to={'/admin/kategori/'+row?.id}><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeleteKategori(row?.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></div>,
+            cell: (row) => <div className="text-center my-3"><Link className='mr-2' to={'/admin/kategori/'+row?.id}><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeleteKategori(row?.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></div>,
             width: '180px'
         }
 

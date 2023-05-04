@@ -6,6 +6,7 @@ import Order from "../model/OrderModel.js"
 import nodemailer from "nodemailer"
 import { InvoiceMail } from "../Email/Invoice.js"
 import client from "../client/client.js"
+import Cart from "../model/CartModel.js"
 
 export const checkout = async(req, res) => {
     try {
@@ -63,7 +64,10 @@ export const checkout = async(req, res) => {
                     Ongkir: body.Ongkir,
                     Subtotal: subtotal,
                     Kota: body.Kota,
-                    Tanggal: tanggal
+                    Tanggal: tanggal,
+                    Potongan: body.Potongan,
+                    PPN: body.PPN,
+                    Kupon: body.Kupon
                 }
 
                 const order = await Order.create(object)
@@ -160,12 +164,25 @@ export const checkout = async(req, res) => {
                     secure: true,
                     connectionTimeout: 5*60*1000
                 })
+                let potonganMail = body.Potongan === 0 ? '' : `
+                <tr>
+                    <td style="padding: 0;" colspan="2">
 
+                    </td>
+                    <td style="padding: 0; border: 1px solid #333333;
+                        padding: 10px;" class="tddetail" align="center">
+                        Potongan
+                    </td>
+                    <td style="padding: 0; border: 1px solid #333333;
+                        padding: 10px;" class="tddetail" align="center">
+                        Rp ${separator(body.Potongan)}
+                    </td>
+                </tr>`
                 const mailData = {
                     from: 'bukubook@gmail.com',
                     to: body.Email,
                     subject: 'Invoice',
-                    html: InvoiceMail(body.Nama, body.Alamat, body.NoTelp, invoice, tanggal, datatable, separator(body.Ongkir), separator(body.Total), body.Email)
+                    html: InvoiceMail(body.Nama, body.Alamat, body.NoTelp, invoice, tanggal, datatable, separator(body.Ongkir), separator(body.Total), body.Email, potonganMail, separator(body.PPN))
                 }
                 
                 transporter.sendMail(mailData, function(err, info) {
@@ -177,6 +194,11 @@ export const checkout = async(req, res) => {
                         })
                     } else {
                         console.log(info)
+                        Cart.destroy({
+                            where: {
+                                CustomerID: customer.id
+                            }
+                        })
                         res.json({
                             status: 200,
                             message: 'Berhasil melakukan checkout',
@@ -184,14 +206,14 @@ export const checkout = async(req, res) => {
                         })
                     }
                 })
-
-                const wmessage = `Terima kasih telah menggunakan layanan BukuBook. Saat ini pesananmu sedang di proses, berikut adalah detail pesananmu\n\nInformasi Order:\nInvoice: ${invoice}\nTanggal: ${tanggal}\nTotal: *Rp ${separator(body.Total)}*\n\nInformasi Pembeli:\nNama: *${body.Nama}*\nTelp: ${body.NoTelp}\nEmail: ${body.Email}\n\nAlamat Tujuan:\nKota: ${body.Kota}\nJalan: ${body.Alamat}\nKodepos: ${body.Kodepos}\n\nBuku:\n${messagebuku}Subtotal: Rp ${separator(subtotal)}\nOngkir: Rp ${separator(body.Ongkir)}\nTotal: Rp ${separator(body.Total)}\n\nCatatan: _${body.Catatan}_`
+                let potongan = body.Potongan === 0 ? '' : `Potongan: Rp -${separator(body.Potongan)}\n`
+                const wmessage = `Terima kasih telah menggunakan layanan BukuBook. Saat ini pesananmu sedang di proses, berikut adalah detail pesananmu\n\nInformasi Order:\nInvoice: ${invoice}\nTanggal: ${tanggal}\nTotal: *Rp ${separator(body.Total)}*\n\nInformasi Pembeli:\nNama: *${body.Nama}*\nTelp: ${body.NoTelp}\nEmail: ${body.Email}\n\nAlamat Tujuan:\nKota: ${body.Kota}\nJalan: ${body.Alamat}\nKodepos: ${body.Kodepos}\n\nBuku:\n${messagebuku}Subtotal: Rp ${separator(subtotal)}\n${potongan}Ongkir: Rp ${separator(body.Ongkir)}\nPPN: Rp ${separator(body.PPN)}\nTotal: Rp ${separator(body.Total)}\n\nCatatan: _${body.Catatan}_`
                 client.sendMessage(`62${customer.NoTelp}@c.us`, wmessage)
 
             } else {
                 res.json({
                     status: 400,
-                    message: 'Barang yang pesan melebihi stok'
+                    message: 'Barang yang dipesan melebihi stok'
                 })
             }
         }

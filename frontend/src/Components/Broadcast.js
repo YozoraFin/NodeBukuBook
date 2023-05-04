@@ -72,7 +72,7 @@ export default function Broadcast() {
         },
         {
             name: 'Opsi',
-            cell: (row) => <div className="text-center"><Link className='mr-2' to={'/admin/broadcast/'+row?.id}><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeleteBroadcast(row?.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></div>,
+            cell: (row) => <div className="text-center my-3"><Link className='mr-2' to={'/admin/broadcast/'+row?.id}><button className="btn btn-primary"><i className="fa-solid fa-pen"></i></button></Link><button onClick={() => {handleDeleteBroadcast(row?.id)}} className="btn btn-danger ml-2"><i className="fa-solid fa-trash"></i></button></div>,
             width: '180px'
         }
     ]

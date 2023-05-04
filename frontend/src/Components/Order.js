@@ -55,7 +55,7 @@ export default function Order() {
         },
         {
             name: 'Opsi',
-            cell: (row) => <div className="text-center"><Link className='mr-2' to={'/admin/order/'+row?.ID}><button className="btn btn-success"><i className="fa-solid fa-magnifying-glass"></i></button></Link></div>,
+            cell: (row) => <div className="text-center my-3"><Link className='mr-2' to={'/admin/order/'+row?.ID}><button className="btn btn-success"><i className="fa-solid fa-magnifying-glass"></i></button></Link></div>,
             width: '90px'
         }
     ]

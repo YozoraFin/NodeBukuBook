@@ -1,10 +1,11 @@
 import { Sequelize } from "sequelize";
 import db from "../config/Database.js";
 import AksesToken from "./AksesTokenModel.js";
-import Buku from "./BukuModel.js";
 import Cart from "./CartModel.js";
 import Komentar from "./KomentarModel.js";
 import Order from "./OrderModel.js";
+import KuponPribadi from "./KuponPribadiModel.js";
+import Kupon from "./KuponModel.js";
 
 const {DataTypes} = Sequelize
 const Customer = db.define('bukubook_content_customer', {
@@ -56,6 +57,8 @@ Customer.hasMany(Komentar, {
 Komentar.belongsTo(Customer, {
     as: 'Customer'
 })
+Customer.belongsToMany(Kupon, {through: KuponPribadi, as: 'Kupon', foreignKey: 'CustomerID'})
+Kupon.belongsToMany(Customer, {through: KuponPribadi, as: 'Customer', foreignKey: 'KuponID'})
 Customer.hasMany(Order, {
     foreignKey: 'CustomerID',
     as: 'Order'

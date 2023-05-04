@@ -23,6 +23,7 @@ import { Server } from 'socket.io';
 import { deleteMessage, deleteMessageEveryone, deleteMessageMe, getChat, getDetailChat, getMessageByOffset, getNewMessage, getNextChat, getNextDetail, getUnreadNotif, replyMessage, sendChat } from './livechat/LiveChatController.js';
 import http  from 'http'
 import bot from './BotTele/telebot.js';
+import KuponRouter from './router/KuponRouter.js';
 
 const app = express()
 app.use(cors())
@@ -134,9 +135,10 @@ app.use('/rajaongkir', RajaOngkirRouter)
 app.use('/checkout', CheckoutRouter)
 app.use('/order', OrderRouter)
 app.use('/broadcast', BroadcastRouter)
+app.use('/kupon', KuponRouter)
 
 client.initialize();
-bot.launch();
+// bot.launch();
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
 

@@ -1,0 +1,9 @@
+1. API:
+    ☐ Merubah deskripsi kupon menjadi html text
+    ☐ Menambahkan pagination untuk API get
+    ☐ Menambahkan API key pada header
+    ☐ Menambahkan detail buku (berat, halaman, penerbit, dll)
+    ☐ Ngehapus otomatis gambar yang uda diganti
+    ✓ Menambahkan kadaluarsa dan mulai kupon @started(23-05-02 14:49) @done(23-05-04 11:41) @lasted(1d20h52m39s)
+    ✓ Menambahkan akses kupon @started(23-05-02 14:49) @done(23-05-04 11:41) @lasted(1d20h52m39s)
+    ✓ Menambahkan minimal harga untuk kupon @started(23-05-02 14:49) @done(23-05-04 11:41) @lasted(1d20h52m39s)

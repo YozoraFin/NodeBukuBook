@@ -47,12 +47,5 @@ Buku.hasMany(Cart, {
 Cart.belongsTo(Buku, {
     as: 'Buku'
 })
-Buku.hasMany(OrderDetail, {
-    as: 'OrderDetail',
-    foreignKey: 'BukuID'
-})
-OrderDetail.belongsTo(Buku, {
-    as: 'Buku'
-})
 
 export default Buku

@@ -25,6 +25,9 @@ import OrderDetail from './Components/OrderDetail.js';
 import Portal from './Components/Portal';
 import SiteConfig from './Components/SiteConfig';
 import socketIO from 'socket.io-client';
+import Kupon from './Components/Kupon.js';
+import CreateKupon from './Components/CreateKupon.js';
+import EditKupon from './Components/EditKupon.js';
 const socket = socketIO.connect('http://localhost:5000')
 
 function App() {
@@ -56,6 +59,9 @@ function App() {
                     <Route exact path='broadcast/create' element={<CreateBroadcast/>} /> 
                     <Route exact path='broadcast/:id' element={<EditBroadcast/>} />
                     <Route exact path='livechat' element={<Livechat socket={socket}/>} />
+                    <Route exact path='kupon' element={<Kupon/>} />
+                    <Route exact path='kupon/create' element={<CreateKupon/>} />
+                    <Route exact path='kupon/:id' element={<EditKupon/>} />
                 </Route>
                 <Route exact path='login' element={<LoginAdmin/>} />
             </Routes>

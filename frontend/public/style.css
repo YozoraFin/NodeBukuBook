@@ -1,3 +1,13 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 .text-underline {
     text-decoration: underline;
 }
@@ -103,8 +113,8 @@ overflow-y: auto;
     width: 5px;
 }
 
-.chat-app .people-list::-webkit-scrollbar:hover {
-    width: 20px;
+.chat-app .people-list:hover::-webkit-scrollbar {
+    width: 7px;
 }
 
 .chat-app .people-list::-webkit-scrollbar-track {
@@ -115,11 +125,6 @@ overflow-y: auto;
     background: #888;
     border-radius: 10px;
     width: 10px;
-}
-
-.chat-app .people-list::-webkit-scrollbar-thumb:hover {
-    background: #555;
-    width: 20px;
 }
 
 .ur {
@@ -225,8 +230,8 @@ height: 440px;
     width: 5px;
 }
 
-.chat .chat-history::-webkit-scrollbar:hover {
-    width: 20px;
+.chat .chat-history:hover::-webkit-scrollbar {
+    width: 7px;
 }
 
 .chat .chat-history::-webkit-scrollbar-track {
@@ -546,4 +551,16 @@ overflow-x: auto
 
 .document-download:hover {
     cursor: pointer;
+}
+
+.banner-kupon {
+    max-width: 350px;
+}
+
+.banner-kupon-table {
+    max-width: 150px;
+}
+
+.react-datetimerange-picker__wrapper {
+    border: none !important;
 }

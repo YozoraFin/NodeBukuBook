@@ -48,6 +48,15 @@ const Order = db.define('bukubook_content_order', {
     },
     Tanggal: {
         type: DataTypes.STRING
+    },
+    Potongan: {
+        type: DataTypes.INTEGER
+    },
+    PPN: {
+        type: DataTypes.INTEGER
+    },
+    Kupon: {
+        type: DataTypes.INTEGER
     }
 }, {
     freezeTableName: true,

@@ -21,5 +21,12 @@ const OrderDetail = db.define('bukubook_content_orderdetail', {
     freezeTableName: true,
     timestamps: false
 })
+Buku.hasMany(OrderDetail, {
+    as: 'OrderDetail',
+    foreignKey: 'BukuID'
+})
+OrderDetail.belongsTo(Buku, {
+    as: 'Buku'
+})
 
 export default OrderDetail
