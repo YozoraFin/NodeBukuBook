@@ -108,6 +108,7 @@ export default function Livechat({ socket }) {
             id: idChat.id
         })
         socket.on('sendDetail', (data) => {
+            console.log(data)
             setOpen(true)
             setChat(data.data)
             curChat.current = data.data

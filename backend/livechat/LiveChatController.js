@@ -97,11 +97,11 @@ export const getNewMessage = async(socket, msg) => {
             var mimetype = ''
 
             if(element.hasMedia && element.type !== 'revoked') {
-                var mediadata = await message.downloadMedia()
-                link = 'data:'+mediadata.mimetype+';base64,'+mediadata.data
-                filename = mediadata.filename
-                filesize = getFileSize(mediadata.filesize)
-                mimetype = mediadata.mimetype
+                var mediadata = await message?.downloadMedia()
+                link = 'data:'+mediadata?.mimetype+';base64,'+mediadata?.data
+                filename = mediadata?.filename
+                filesize = getFileSize(mediadata?.filesize)
+                mimetype = mediadata?.mimetype
             }
 
             var body = {
@@ -224,17 +224,17 @@ export const getDetailChat = async(socket, data) => {
     try {
         totalMessage = 0
         var contact = await client?.getContactById(data?.id)
-        var chat = await contact.getChat()
-        var fMessage = await chat.fetchMessages({limit: 50})
+        var chat = await contact?.getChat()
+        var fMessage = await chat?.fetchMessages({limit: 50})
         var message = []
-        var profile = await contact.getProfilePicUrl()
+        var profile = await contact?.getProfilePicUrl()
         var time
         chat.sendSeen()
     
         for (let index = 0; index < fMessage.length; index++) {
             const element = fMessage[index];
             const month = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Ags","Sep","Okt","Nov","Des"];
-            const d = new Date(element.timestamp*1000)
+            const d = new Date(element?.timestamp*1000)
             const hari = Date.now()/1000 - 60*60*24
             var minute
             if(d.getMinutes() < 10) {
@@ -258,10 +258,10 @@ export const getDetailChat = async(socket, data) => {
                 var mimetype = ''
                 if(reply.hasMedia) {
                     var replymedia = await reply.downloadMedia()
-                    filesize = getFileSize(replymedia.filesize)
+                    filesize = getFileSize(replymedia?.filesize)
                     link = 'data:'+replymedia?.mimetype+';base64,'+replymedia?.data
-                    filename = replymedia.filename
-                    mimetype = replymedia.mimetype
+                    filename = replymedia?.filename
+                    mimetype = replymedia?.mimetype
                 }
 
                 replydata = {
@@ -648,10 +648,10 @@ export const getMessageByOffset = async(socket, data) => {
     
                 if(element.hasMedia && element.type !== 'revoked') {
                     var mediadata = await element.downloadMedia()
-                    link = 'data:'+mediadata.mimetype+';base64,'+mediadata.data
-                    filename = mediadata.filename
-                    filesize = getFileSize(mediadata.filesize)
-                    mimetype = mediadata.mimetype
+                    link = 'data:'+mediadata?.mimetype+';base64,'+mediadata?.data
+                    filename = mediadata?.filename
+                    filesize = getFileSize(mediadata?.filesize)
+                    mimetype = mediadata?.mimetype
                 }
 
                 message.push({

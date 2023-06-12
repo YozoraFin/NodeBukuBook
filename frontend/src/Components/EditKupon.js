@@ -175,6 +175,7 @@ export default function EditKupon() {
             // Nambahin initial Range
             setRange([new Date(res.data?.data?.Mulai), new Date(res?.data?.data?.Selesai)])
             setMinimal(res.data?.data?.Minimal)
+            setBatasPakai(res.data?.data?.BatasPakai)
         })
     }
 

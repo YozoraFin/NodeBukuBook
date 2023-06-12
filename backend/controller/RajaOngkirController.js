@@ -1,10 +1,12 @@
 import axios from "axios"
+import dotenv from 'dotenv'
+dotenv.config()
 
 export const getProvince = async(req, res) => {
     try {
         const config = {
             headers: {
-                key: '415353d2cf7e1bad9071f558fd9b58dc'
+                key: process.env.API_KEY_RAJAONGKIR
             }
         }
         let data = []
@@ -30,7 +32,7 @@ export const getCity = async(req, res) => {
     try {
         const config = {
             headers: {
-                key: '415353d2cf7e1bad9071f558fd9b58dc'
+                key: process.env.API_KEY_RAJAONGKIR
             }
         }
 
@@ -59,7 +61,7 @@ export const getOngkir = async(req, res) => {
     try {
         const config = {
             headers: {
-                key: '415353d2cf7e1bad9071f558fd9b58dc'
+                key: process.env.API_KEY_RAJAONGKIR
             }
         }
 

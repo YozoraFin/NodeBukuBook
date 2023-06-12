@@ -17,7 +17,7 @@ var upload = multer({
 })
 
 const KuponRouter = express.Router()
-KuponRouter.post('/', getKupon)
+KuponRouter.post('/get', getKupon)
 KuponRouter.post('/check', checkKupon)
 KuponRouter.get('/:id', getDetailKupon)
 KuponRouter.post('/admin', getKuponAdmin)

@@ -7,6 +7,8 @@ import nodemailer from "nodemailer"
 import { InvoiceMail } from "../Email/Invoice.js"
 import client from "../client/client.js"
 import Cart from "../model/CartModel.js"
+import Kupon from "../model/KuponModel.js"
+import KuponPribadi from "../model/KuponPribadiModel.js"
 
 export const checkout = async(req, res) => {
     try {
@@ -68,6 +70,27 @@ export const checkout = async(req, res) => {
                     Potongan: body.Potongan,
                     PPN: body.PPN,
                     Kupon: body.Kupon
+                }
+
+                const kupon = await Kupon.findOne({
+                    id: body.Kupon
+                })
+
+                if(kupon.BatasPakai > 0 && kupon.Akses) {
+                    const checkOrder = await Order.findAll({
+                        where: {
+                            CustomerID: customer.id,
+                            Kupon: body.Kupon
+                        }
+                    })
+                    if(checkOrder.length === kupon.BatasPakai - 1) {
+                        await KuponPribadi.destroy({
+                            where: {
+                                KuponID: body.Kupon,
+                                CustomerID: customer.id
+                            }
+                        })
+                    }
                 }
 
                 const order = await Order.create(object)

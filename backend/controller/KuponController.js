@@ -4,6 +4,7 @@ import Customer from "../model/CustomerModel.js";
 import Kupon from "../model/KuponModel.js"
 import KuponPribadi from "../model/KuponPribadiModel.js";
 import dotenv from 'dotenv'
+import Order from "../model/OrderModel.js";
 dotenv.config()
 const adminpass = process.env.ADMIN_KEY
 
@@ -33,25 +34,51 @@ export const getKupon = async(req, res) => {
                 ]
             }
         })
-        
+
         let dKupon = []
         for (let index = 0; index < kupon.length; index++) {
             const element = kupon[index];
-            dKupon.push({
-                id: element.id,
-                Judul: element.Judul,
-                Deskripsi: element.Deskripsi,
-                Kode: element.Kode,
-                Tipe: element.Tipe,
-                Potongan: element.Potongan,
-                Teaser: element.Teaser,
-                SrcGambar: element.SrcGambar,
-                NamaGambar: element.NamaGambar,
-                HighLight: element.HighLight,
-                Minimal: element.Minimal,
-                Mulai: element.Mulai,
-                Selesai: element.Selesai
-            })
+            let next = true
+            if(element.BatasPakai > 0) {
+                const customer = await Customer.findOne({
+                    include: [
+                        {
+                            model: AksesToken,
+                            as: 'Token',
+                            where: {
+                                AksesToken: req.body.AksesToken
+                            }
+                        }
+                    ]
+                })
+                const order = await Order.findAll({
+                    where: {
+                        CustomerID: customer.id,
+                        Kupon: element.id
+                    }
+                })
+                if(order.length >= element.BatasPakai) {
+                    next = false
+                }
+            }
+            if(next) {
+                dKupon.push({
+                    id: element.id,
+                    Judul: element.Judul,
+                    Deskripsi: element.Deskripsi,
+                    Kode: element.Kode,
+                    Tipe: element.Tipe,
+                    Potongan: element.Potongan,
+                    Teaser: element.Teaser,
+                    SrcGambar: element.SrcGambar,
+                    NamaGambar: element.NamaGambar,
+                    HighLight: element.HighLight,
+                    Minimal: element.Minimal,
+                    Mulai: element.Mulai,
+                    Selesai: element.Selesai,
+                    Akses: element.Akses
+                })
+            }
         }
 
         let hKupon = await Kupon.findOne({
@@ -132,16 +159,16 @@ export const checkKupon = async(req, res) => {
             }
         })
         if(kupon) {
-            if(kupon.Akses) {
-                const customer = await Customer.findOne({
-                    include: {
-                        model: AksesToken,
-                        as: 'Token',
-                        where: {
-                            AksesToken: req.body.AksesToken
-                        }
+            const customer = await Customer.findOne({
+                include: {
+                    model: AksesToken,
+                    as: 'Token',
+                    where: {
+                        AksesToken: req.body.AksesToken
                     }
-                })
+                }
+            })
+            if(kupon.Akses) {
                 const check = await KuponPribadi.findOne({
                     where: {
                         CustomerID: customer.id,
@@ -149,30 +176,50 @@ export const checkKupon = async(req, res) => {
                     }
                 })
                 if(!check) {
-                    res.json({
+                    return res.json({
                         status: 404,
                         message: 'Kode tidak ditemukan'
                     })
                 }
             }
             if(kupon.Minimal > req.body.Subtotal) {
-                res.json({
+                return res.json({
                     status: 403,
                     message: 'Subtotal pesanan belum memenuhi persyaratan minimal'
                 })
             }
-            if(kupon.Mulai > new Date().getTime() || kupon.Selesai < new Date().getTime()) {
-                res.json({
+            if(kupon.Mulai > new Date().getTime()) {
+                return res.json({
                     status: 403,
                     message: 'Kupon saat ini belum bisa digunakan'
                 })
+            }
+            if(kupon.Selesai < new Date().getTime()) {
+                return res.json({
+                    status: 403,
+                    message: 'Masa berlaku kupon telah habis'
+                })
+            }
+            if(kupon.BatasPakai !== 0) {
+                const order = await Order.findAll({
+                    where: {
+                        CustomerID: customer.id,
+                        Kupon: kupon.id
+                    }
+                })
+                if(order.length >= kupon.BatasPakai) {
+                    return res.json({
+                        status: 404,
+                        message: 'Kupon tidak ditemukan'
+                    })
+                }
             }
             const data = {
                 Potongan: kupon.Potongan,
                 Tipe: kupon.Tipe,
                 id: kupon.id
             }
-            res.json({
+            return res.json({
                 status: 200,
                 data: data,
                 message: 'Berhasil menambahkan potongan'
@@ -196,11 +243,18 @@ export const getDetailKupon = async(req, res) => {
             },
             attributes: ['id', 'Judul', 'Deskripsi', 'Kode', 'Tipe', 'Potongan', 'NamaGambar', 'SrcGambar', 'Minimal', 'Mulai', 'Selesai']
         })
-        res.json({
-            status: 200,
-            data: kupon,
-            message: 'Ok'
-        })
+        if(kupon) {
+            res.json({
+                status: 200,
+                data: kupon,
+                message: 'Ok'
+            })
+        } else  {
+            res.json({
+                status: 404,
+                message: 'Kupon tidak ditemukan'
+            })
+        }
     } catch (error) {
         console.log(error)
     }
@@ -364,7 +418,7 @@ export const updateKupon = async(req, res) => {
                     NamaGambar: req.body.NamaGambar,    
                 }
             }
-            
+
             await KuponPribadi.destroy({
                 where: {
                     KuponID: req.params.id

@@ -77,8 +77,6 @@ export const getArticle = async(req, res) => {
             data: articledata,
             message: 'Ok'
         })
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "X-Requested-With");
     } catch(error) {
         console.log(error)
     }
@@ -173,8 +171,6 @@ export const getDetailArticle = async(req, res) => {
             data: data,
             message: 'Ok'
         })
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "X-Requested-With");
         
     } catch (error) {
         console.log(error)
@@ -189,8 +185,6 @@ export const createArticle = async(req, res) => {
                 status: 200,
                 message: 'Ok'
             })
-            res.header("Access-Control-Allow-Origin", "*");
-            res.header("Access-Control-Allow-Headers", "X-Requested-With");
         } else {
             const month = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Ags","Sep","Okt","Nov","Des"];
             const date = new Date()
@@ -209,8 +203,6 @@ export const createArticle = async(req, res) => {
                 status: 200,
                 message: 'Ok'
             })
-            res.header("Access-Control-Allow-Origin", "*");
-            res.header("Access-Control-Allow-Headers", "X-Requested-With");
         }
     } catch (error) {
         console.log(error)
@@ -261,8 +253,6 @@ export const updateArticle = async(req, res) => {
                 status: 200,
                 message: 'Ok'
             })
-            res.header("Access-Control-Allow-Origin", "*");
-            res.header("Access-Control-Allow-Headers", "X-Requested-With");
         }
     } catch (error) {
         console.log(error)
@@ -295,8 +285,6 @@ export const deleteArticle = async(req, res) => {
             status: 200,
             message: 'Ok'
         })
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "X-Requested-With");
     } catch (error) {
         console.log(error)
     }

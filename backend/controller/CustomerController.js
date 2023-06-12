@@ -66,6 +66,11 @@ export const register = async(req, res) => {
 
 export const getOTP = async(req, res) => {
     try {
+        let login = false
+        if(req.body.Login) {
+            login = req.body.Login
+        }
+
         let noTelp = req.body.NoTelp
         noTelp = noTelp.replace(/\s/g, '')
         noTelp = noTelp.replace(/-/g, '')
@@ -83,7 +88,7 @@ export const getOTP = async(req, res) => {
             }
         }) 
 
-        if(check.length > 0) {
+        if(check.length > 0 && !login) {
             res.json({
                 status: 400,
                 message: 'Nomor ini sudah digunakan'
@@ -157,11 +162,18 @@ export const verifikasiOTP = async(req, res) => {
                     let token = ''
                     let completed = true
                     if(customer.NamaLengkap !== '') {
-                        await AksesToken.destroy({
+                        const checkToken = await AksesToken.findAll({
                             where: {
                                 CustomerID: customer.id
                             }
                         })
+                        if(checkToken.length > 2) {
+                            await AksesToken.destroy({
+                                where: {
+                                    CustomerID: customer.id
+                                }
+                            })
+                        }
                         token = md5(`${customer.id}${Date.now()}`)
                         const object = {
                             AksesToken: token,
@@ -177,7 +189,11 @@ export const verifikasiOTP = async(req, res) => {
                         status: 200,
                         accesstoken: token,
                         data: completed,
-                        message: 'Selamat datang kembali'
+                        message: 'Selamat datang kembali',
+                        namalengkap: customer.NamaLengkap,
+                        namapanggilan: customer.NamaPanggilan,
+                        alamat: customer.Alamat,
+                        email: customer.Email,
                     })
                 }
 
@@ -217,6 +233,7 @@ export const loginOtp = async(req, res) => {
                 message: 'Akun Tidak ditemukan'
             })
         }
+        
         await Verification.destroy({
             where: {
                 NoTelp: noTelp
@@ -266,11 +283,18 @@ export const login = async(req, res) => {
                 let token = ''
                 let completed = true
                 if(customer.NamaLengkap !== '') {
-                    await AksesToken.destroy({
+                    const checkToken = await AksesToken.findAll({
                         where: {
                             CustomerID: customer.id
                         }
                     })
+                    if(checkToken.length > 2) {
+                        await AksesToken.destroy({
+                            where: {
+                                CustomerID: customer.id
+                            }
+                        })
+                    }
                     token = md5(`${customer.id}${Date.now()}`)
                     const object = {
                         AksesToken: token,
@@ -286,7 +310,7 @@ export const login = async(req, res) => {
                     status: 200,
                     accesstoken: token,
                     data: completed,
-                    message: 'Selamat datang kembali'
+                    message: 'Selamat datang kembali',
                 })
             } else {
                 res.json({
