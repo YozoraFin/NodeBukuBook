@@ -9,6 +9,8 @@ import client from "../client/client.js"
 import Cart from "../model/CartModel.js"
 import Kupon from "../model/KuponModel.js"
 import KuponPribadi from "../model/KuponPribadiModel.js"
+import dotenv from 'dotenv'
+dotenv.config()
 
 export const checkout = async(req, res) => {
     try {
@@ -182,7 +184,7 @@ export const checkout = async(req, res) => {
                     service: 'gmail',
                     auth: {
                         user: 'arjunamarcel25@gmail.com',
-                        pass: 'brtioyjxtzgxcyui'
+                        pass: process.env.PASS_KEY
                     },
                     secure: true,
                     connectionTimeout: 5*60*1000

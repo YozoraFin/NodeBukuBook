@@ -3,6 +3,6 @@ import { getSiteConfig, updateSiteConfig } from "../controller/SiteConfigControl
 
 const SiteConfigRouter = express.Router()
 SiteConfigRouter.get('/', getSiteConfig)
-SiteConfigRouter.patch('/:id', updateSiteConfig)
+SiteConfigRouter.patch('/', updateSiteConfig)
 
 export default SiteConfigRouter

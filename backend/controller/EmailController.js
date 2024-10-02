@@ -1,13 +1,18 @@
 import nodemailer from 'nodemailer'
 import { EmailContact } from '../Email/Contact.js'
+import dotenv from 'dotenv'
+dotenv.config()
 
 export const contactMail = async(req, res) => {
     try {
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            service: 'Gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
                 user: 'arjunamarcel25@gmail.com',
-                pass: 'brtioyjxtzgxcyui'
+                pass: process.env.PASS_KEY
             },
             secure: true,
             connectionTimeout: 5*60*1000
